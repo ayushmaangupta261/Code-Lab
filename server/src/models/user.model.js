@@ -42,6 +42,12 @@ const userSchema = Schema(
       type: String,
       default: null,
     },
+
+    // for instructor
+    questions:{
+      type: [Schema.Types.ObjectId],
+      ref: "Question"
+    }
   },
   {
     timestamps: true,

@@ -1,0 +1,7 @@
+const BASE_URL = import.meta.env.VITE_APP_BASE_URL;
+
+console.log("Base url -> ", import.meta.env.VITE_APP_BASE_URL);
+
+export const codeEndpoints = {
+  COMPILE_CODE: BASE_URL + "/code/compile",
+};

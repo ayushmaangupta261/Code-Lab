@@ -20,7 +20,7 @@ console.log(process.env.CORS_ORIGIN);
 
 app.use(
   cors({
-    origin:"http://localhost:3000",
+    origin: "http://localhost:3000",
     // origin: process.env.CORS_ORIGIN,
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -34,8 +34,10 @@ app.use(cookieParser());
 
 // importing the routes
 import userRoutes from "./routes/user.routes.js";
+import codeingRoutes from "./routes/code.routes.js";
 
 // route declaration
 app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/code", codeingRoutes);
 
 export { app };
