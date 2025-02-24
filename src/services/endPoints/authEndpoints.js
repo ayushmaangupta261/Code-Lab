@@ -6,4 +6,7 @@ export const authEnpoint = {
   RegisterUser_API: BASE_URL + "/users/register",
   LogInUser_API: BASE_URL + "/users/login",
   AuthStatus_API: BASE_URL + "/users/auth-status",
+
+  // Institute
+  RegisterInstitute_API: BASE_URL + "/institute/register-institute",
 };

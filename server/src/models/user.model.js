@@ -42,12 +42,20 @@ const userSchema = Schema(
       type: String,
       default: null,
     },
+    collegeId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+    questionsSolved: {
+      type: [Schema.Types.ObjectId],
+      ref: "Question",
+    },
 
     // for instructor
-    questions:{
+    questions: {
       type: [Schema.Types.ObjectId],
-      ref: "Question"
-    }
+      ref: "Question",
+    },
   },
   {
     timestamps: true,

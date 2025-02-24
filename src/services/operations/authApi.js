@@ -7,7 +7,12 @@ import {
 } from "../../redux/slices/authSlice";
 import toast from "react-hot-toast";
 
-const { RegisterUser_API, LogInUser_API, AuthStatus_API } = authEnpoint;
+const {
+  RegisterUser_API,
+  LogInUser_API,
+  AuthStatus_API,
+  RegisterInstitute_API,
+} = authEnpoint;
 
 // register user
 export const registerUser = (data) => async (dispatch) => {
@@ -50,15 +55,16 @@ export const login = (data, navigate) => async (dispatch) => {
   dispatch(setAuthLoading(true));
   try {
     console.log("Data in login api -> ", data);
-    const { email, password } = data;
+    const { email, password, role } = data;
 
-    if (!email || !password) {
+    if (!email || !password || !role) {
       throw new Error("Email and password are required");
     }
 
     const response = await apiConnector("POST", LogInUser_API, {
       email,
       password,
+      role,
     });
 
     console.log("Response from login user in authApi -> ", response);
@@ -126,5 +132,39 @@ export const authStatus = async (token) => {
   } catch (error) {
     console.log("Error in auth status -> ", error);
     toast.response(`${error.response.data.message} , please login`);
+  }
+};
+
+// Institute
+export const registerInstitute = (data) => async (dispatch) => {
+  dispatch(setAuthLoading(true));
+  try {
+    console.log("Data in register Institute -> ", data);
+    const { fullName, email, password } = data;
+    // console.log("Full Name -> ", fullName);
+
+    if (!fullName || !email || !password) {
+      throw new Error("All fields are required");
+    }
+
+    console.log("Register api ->", RegisterInstitute_API);
+
+    const response = await apiConnector("POST", RegisterInstitute_API, {
+      name: fullName,
+      email,
+      password,
+    });
+
+    console.log("Response from register institute in authApi -> ", response);
+
+    dispatch(setAuthLoading(false));
+
+    toast.success("Registration Done Successfully");
+
+    return response;
+  } catch (error) {
+    console.log("Error: ", error);
+    dispatch(setAuthLoading(false));
+    toast.error(error.message);
   }
 };

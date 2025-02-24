@@ -3,9 +3,10 @@ import {
   authStatus,
   registerUser,
   loginUser,
+
 } from "../controllers/user.controllers.js";
 
-import {createQuestion} from "../controllers/instructor.controller.js"
+import { createQuestion } from "../controllers/instructor.controller.js";
 
 import { upload } from "../middlewares/multer.middleware.js";
 
@@ -36,10 +37,9 @@ router.route("/login").post(loginUser);
 // auth status
 router.route("/auth-status").get(authMiddleware, authStatus);
 
-
-
 // instructor route
 router.route("/post-question").post(createQuestion); // add middleware
+
 
 
 export default router;

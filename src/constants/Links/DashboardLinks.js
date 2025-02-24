@@ -34,6 +34,7 @@ export const DashboardLinks =[
         id:5,
         name:"Notification",
         path:"/dashboard/notification",
+        type:ACCOUNT_TYPE.STUDENT,
         // icon:"VscAccount"
     },
     {
