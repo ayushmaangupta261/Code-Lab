@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { Controlled as CodeMirror } from "react-codemirror2";
-import "codemirror/lib/codemirror.css";
-import "codemirror/theme/dracula.css";
-import "codemirror/mode/clike/clike";
-import "codemirror/mode/python/python";
+import CodeMirror from "@uiw/react-codemirror";
+import { cpp } from "@codemirror/lang-cpp";
+import { java } from "@codemirror/lang-java";
+import { python } from "@codemirror/lang-python";
+import { dracula } from "@uiw/codemirror-theme-dracula";
 import { compileCode } from "../../services/operations/codeApi";
 import { useDispatch } from "react-redux";
 
@@ -23,10 +23,7 @@ const SubmitSolution = () => {
         compileCode({ code, input, lang: language })
       );
 
-      console.log(
-        "🔹 Full Response from API ->",
-        JSON.stringify(response, null, 2)
-      );
+      console.log("🔹 Full Response from API ->", JSON.stringify(response, null, 2));
 
       if (response && response.result) {
         console.log("✅ Final output ->", response.result);
@@ -42,16 +39,17 @@ const SubmitSolution = () => {
   };
 
   return (
-    <div className="container mx-auto  mt-[5rem] h-[100vh]">
-      <h2 className="text-center text-2xl font-bold   ">Online Code Editor</h2>
-      <div className="flex mb-4 gap-4 bg-slate-900 ">
+    <div className="container mx-auto mt-[5rem] h-[100vh]">
+      <h2 className="text-center text-2xl font-bold">Online Code Editor</h2>
+
+      {/* Language Selector & Run Button */}
+      <div className="flex mb-4 gap-4 bg-slate-900 p-2">
         <select
           className="border p-2 rounded bg-slate-950 text-white"
+          value={language}
           onChange={(e) => setLanguage(e.target.value)}
         >
-          <option value="Cpp" className="bg-slate-950">
-            C++
-          </option>
+          <option value="Cpp">C++</option>
           <option value="Java">Java</option>
           <option value="Python">Python</option>
         </select>
@@ -62,22 +60,20 @@ const SubmitSolution = () => {
           Run
         </button>
       </div>
+
+      {/* Code Editor */}
       <CodeMirror
         value={code}
-        options={{
-          mode:
-            language === "Java"
-              ? "text/x-java"
-              : language === "Python"
-              ? "text/x-python"
-              : "text/x-c++src",
-          theme: "dracula",
-          lineNumbers: true,
-          autoCloseBrackets: true,
-        }}
-        onBeforeChange={(editor, data, value) => setCode(value)}
+        height="300px"
+        theme={dracula}
+        extensions={[
+          language === "Java" ? java() : language === "Python" ? python() : cpp(),
+        ]}
+        onChange={(value) => setCode(value)}
         className="border rounded"
       />
+
+      {/* Input & Output */}
       <div className="grid grid-cols-2 gap-4 mt-4">
         <div>
           <label className="block font-medium mb-1">Input</label>

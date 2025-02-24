@@ -1,45 +1,33 @@
-import React from 'react'
-import { useSelector } from 'react-redux'
-import { useDispatch } from 'react-redux'
-import { useState } from 'react'
-import { VscSignOut } from 'react-icons/vsc'
-import { useNavigate } from 'react-router-dom'
-import { DashboardLinks } from '../../constants/Links/DashboardLinks'
-import SidebarLink from './SidebarLink'
-
+import React from "react";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { useState } from "react";
+import { VscSignOut } from "react-icons/vsc";
+import { useNavigate } from "react-router-dom";
+import { DashboardLinks } from "../../constants/Links/DashboardLinks";
+import SidebarLink from "./SidebarLink";
 
 const Sidebar = ({ accountType }) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
+  console.log("Account type -> ", accountType);
 
+  return (
+    <div className="flex flex-col gap-y-6 w-full ">
+      <div className="">
+        {DashboardLinks?.map((link, index) => {
+          if (link?.type && accountType !== link?.type) return null;
+          return (
+            <SidebarLink link={link} iconName={link?.icon} key={link?.id} />
+          );
+        })}
+      </div>
 
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
- 
+      <div className="h-[0.1rem] w-[90%] mx-auto bg-gray-200"></div>
 
-
-    return (
-
-
-
-        <div className='flex flex-col gap-y-6 w-full '>
-            <div className=''>
-                {
-                    DashboardLinks?.map((link, index) => {
-                        if (link?.type && accountType !== link?.type) return null;
-                        return (
-                            <SidebarLink link={link} iconName={link?.icon} key={link?.id} />
-                        )
-                    })
-                }
-            </div>
-
-            <div className='h-[0.1rem] w-[90%] mx-auto bg-gray-200'></div>
-
-
-            <div className=''>
-               
-
-                {/* <button
+      <div className="">
+        {/* <button
                     onClick={() => setConfirmationModal({
                         text1: "Are you sure ?",
                         text2: "You will be logged out of your Account",
@@ -58,22 +46,9 @@ const Sidebar = ({ accountType }) => {
 
                     </div>
                 </button> */}
+      </div>
+    </div>
+  );
+};
 
-                
-
-
-
-
-            </div>
-
-
-        </div>
-
-
-
-
-
-    )
-}
-
-export default Sidebar
+export default Sidebar;

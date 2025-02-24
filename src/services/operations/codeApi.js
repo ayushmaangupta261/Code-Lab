@@ -2,7 +2,7 @@ import { apiConnector } from "../apiConnector.js";
 import { codeEndpoints } from "../endPoints/codeEndpoints.js";
 import toast from "react-hot-toast";
 
-const { COMPILE_CODE } = codeEndpoints;
+const { COMPILE_CODE, CreateQuestion_API } = codeEndpoints;
 
 export const compileCode = (data) => async (dispatch) => {
   try {
@@ -32,4 +32,17 @@ export const compileCode = (data) => async (dispatch) => {
   } catch (error) {
     console.error("❌ Error during compilation:", error);
   }
+};
+
+//  create question
+export const createQuestion = (data) => async (dispatch) => {
+  try {
+    console.log("Hello there");
+
+    console.log("Data in create question api -> ", data);
+
+    const response = await apiConnector("POST", CreateQuestion_API, data);
+
+    console.log("Full Response from API ->", response);
+  } catch (error) {}
 };

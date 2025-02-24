@@ -22,6 +22,7 @@ import { JobUpdates } from "./components/Dashboard/DashboardComponent/JobUpdates
 import Settings from "./components/Dashboard/DashboardComponent/Settings.jsx";
 import Notification from "./components/Dashboard/DashboardComponent/Notification.jsx";
 import SubmitSolution from "./components/Editor/SubmitSolution.jsx";
+import CreateQuestion from "./components/Dashboard/DashboardComponent/CreateQuestion.jsx";
 
 const router = createBrowserRouter([
   {
@@ -71,6 +72,10 @@ const router = createBrowserRouter([
           {
             path: "/dashboard/job-applies",
             element: <JobApplies />,
+          },
+          {
+            path: "/dashboard/create-question",
+            element: <CreateQuestion />,
           },
           {
             path: "/dashboard/jobs",

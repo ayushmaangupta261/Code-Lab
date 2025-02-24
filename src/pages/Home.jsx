@@ -21,7 +21,7 @@ const Home = () => {
 
 
   useEffect(() => {
-    authStatus(user?.accessToken);
+    // authStatus(user?.accessToken);
   }, []);
 
 

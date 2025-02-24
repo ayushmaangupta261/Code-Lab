@@ -31,7 +31,7 @@ const Dashboard = () => {
 
             {/* Dashboard */}
             <div className='w-[85%] h-full bg-[#282a36] rounded-xl'>
-                <Outlet />
+                <Outlet context={user} />
             </div>
         </div>
     )

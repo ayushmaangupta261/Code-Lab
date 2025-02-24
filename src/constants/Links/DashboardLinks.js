@@ -25,8 +25,8 @@ export const DashboardLinks =[
     },
     {
         id:4,
-        name:"Assignments",
-        path:"/dashboard/assignment-given",
+        name:"Create Question",
+        path:"/dashboard/create-question",
         type:ACCOUNT_TYPE.INSTRUCTOR,
         // icon:"VscAdd"
     },
