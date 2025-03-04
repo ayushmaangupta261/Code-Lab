@@ -44,7 +44,11 @@ const userSchema = Schema(
     },
     collegeId: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Institute",
+    },
+    instructor:{
+      type: Schema.Types.ObjectId,
+      ref: "Instructor",
     },
     questionsSolved: {
       type: [Schema.Types.ObjectId],

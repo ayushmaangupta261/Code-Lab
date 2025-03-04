@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 import path from "path";
+import authMiddleware from "./middlewares/auth.middleware.js";
 
 // Get the root directory
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -37,11 +38,17 @@ import userRoutes from "./routes/user.routes.js";
 import codeingRoutes from "./routes/code.routes.js";
 import instituteRoutes from "./routes/institute.routes.js";
 import aiRoutes from "./routes/ai.routes.js";
+import assignmentRoutes from "./routes/assignment.routes.js";
+
 
 // route declaration
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/code", codeingRoutes);
 app.use("/api/v1/institute", instituteRoutes);
 app.use("/api/v1/ai-routes", aiRoutes);
+
+app.use("/api/v1/assignment", assignmentRoutes);
+
+
 
 export { app };

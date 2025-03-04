@@ -31,6 +31,14 @@ const questionSchema = Schema(
     createdBY:{
       type: mongoose.Types.ObjectId,
       ref: "User"
+    },
+    collegeId:{
+      type: mongoose.Types.ObjectId,
+      ref: "Institute"
+    },
+    solvedBy:{
+      type: mongoose.Types.ObjectId,
+      ref: "User"
     }
   },
   {

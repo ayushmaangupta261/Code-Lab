@@ -2,7 +2,9 @@ import { apiConnector } from "../apiConnector.js";
 import { codeEndpoints } from "../endPoints/codeEndpoints.js";
 import toast from "react-hot-toast";
 
-const { COMPILE_CODE, CreateQuestion_API } = codeEndpoints;
+
+const { COMPILE_CODE, CreateQuestion_API, SolveQuestions_API } = codeEndpoints;
+
 
 export const compileCode = (data) => async (dispatch) => {
   try {
@@ -34,6 +36,7 @@ export const compileCode = (data) => async (dispatch) => {
   }
 };
 
+
 //  create question
 export const createQuestion = (data) => async (dispatch) => {
   try {
@@ -41,8 +44,34 @@ export const createQuestion = (data) => async (dispatch) => {
 
     console.log("Data in create question api -> ", data);
 
-    const response = await apiConnector("POST", CreateQuestion_API, data);
+    const response = await apiConnector("GET", CreateQuestion_API, data);
 
     console.log("Full Response from API ->", response);
-  } catch (error) {}
+
+    if(!response.status){
+      throw new Error(response.message);
+    }
+
+  } catch (error) {
+    console.error("Error during question creation :-> ", error);
+  }
+};
+
+
+// get solved question
+export const getSolvedQuestion = (data) => async (dispatch) => {
+  try {
+    console.log("getting solved questions, solved api -> ", data);
+
+    const response = await apiConnector("GET", SolveQuestions_API, data);
+
+    console.log("Full Response from API ->", response);
+  
+    if(!response.status){
+      throw new Error(response.message);
+    }
+
+  } catch (error) {
+    console.log("Error during fetching solved questions :-> ", error);
+  }
 };

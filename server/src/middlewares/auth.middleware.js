@@ -3,6 +3,7 @@ import jwt, { decode } from "jsonwebtoken";
 const authMiddleware = (req, res, next) => {
   try { 
     // console.log("req -> ",req.body); 
+    // console.log("cookie -> ",req.cookies)
     const authHeader = req.headers["authorization"];
     console.log("Token -> ",authHeader);
 
@@ -11,7 +12,7 @@ const authMiddleware = (req, res, next) => {
     }
 
     const accessToken = authHeader.split(" ")[1];
-    
+     
     console.log("Acess token -> ", accessToken);
 
     if (!accessToken) {
@@ -23,7 +24,7 @@ const authMiddleware = (req, res, next) => {
     // Verify the token
     const decoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
 
-    console.log("Decoded -> ",decoded)
+    // console.log("Decoded -> ",decoded)
 
     if (!decoded) {
       return res
@@ -33,6 +34,8 @@ const authMiddleware = (req, res, next) => {
 
     // Attach user details to `req.user` for further processing
     req.user = decoded;
+
+    console.log(req.user);
 
     // Proceed to the next middleware or route handler
     next();

@@ -10,7 +10,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 // ✅ Load environment variables
 dotenv.config({
   path: path.resolve(__dirname, "../../../.env"), // Adjust path as needed
-}); 
+});
 
 console.log("Google API Key -> ", process.env.GOOGLE_API_KEY);
 
@@ -18,12 +18,12 @@ console.log("Google API Key -> ", process.env.GOOGLE_API_KEY);
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-/**
- * Handles AI-generated content request
- */
-const myAi = async (req, res) => {
+//  Handles AI-generated content request
+const myAi = async (message) => {
   try {
-    const { message } = req.body; // ✅ Extract input from request body
+    // const { message } = req.body; // ✅ Extract input from request body
+
+    console.log("AI Request Message -> ", message);
 
     if (!message) {
       return res.status(400).json({
@@ -32,25 +32,19 @@ const myAi = async (req, res) => {
       });
     }
 
-    console.log("AI Request Message -> ", message);
-
     // ✅ Generate AI response
     const result = await model.generateContent(message);
+    // console.log("Result -> ", result);
     const responseText = result.response.text();
 
     console.log("AI Response -> ", responseText);
 
-    return res.json({
-      success: true,
-      response: responseText, // ✅ Send AI response
-    });
+   return responseText
+
   } catch (error) {
     console.error("AI Error -> ", error);
 
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    return "Error from ai model"
   }
 };
 
