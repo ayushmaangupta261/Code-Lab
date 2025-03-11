@@ -28,7 +28,7 @@ const questionSchema = Schema(
         ref: "Example",
       }
     ],
-    createdBY:{
+    createdBy:{
       type: mongoose.Types.ObjectId,
       ref: "User"
     },

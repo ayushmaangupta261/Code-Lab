@@ -4,7 +4,7 @@ import authMiddleware from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-router.route("/getAllAssignments").get(authMiddleware, getAllAssignments);
+router.route("/get-all-assignments").get(authMiddleware, getAllAssignments);
 router.route("/auth-status").get(authMiddleware);
 
 export default router;

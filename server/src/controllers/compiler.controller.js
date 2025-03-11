@@ -18,8 +18,8 @@ const compileCode = async (req, res) => {
     }
 
     let envData = { OS: "windows" };
-    if (lang === "Cpp") envData.cmd = "g++";
-    if (lang === "Java") envData.cmd = "javac";
+    if (lang === "cpp") envData.cmd = "g++";
+    if (lang === "java") envData.cmd = "javac";
 
     const callback = async (data) => {
       console.log(
@@ -47,16 +47,16 @@ const compileCode = async (req, res) => {
 
 
     // Compile Java with Scanner Input
-    if (lang === "Java") {
+    if (lang === "java") {
       console.log("🔹 Java compilation started...");
       input
         ? compiler.compileJavaWithInput(envData, code, input, callback) // ✅ Corrected function
         : compiler.compileJava(envData, code, callback); // ✅ Corrected function
-    } else if (lang === "Cpp") {
+    } else if (lang === "cpp") {
       input
         ? compiler.compileCPPWithInput(envData, code, input, callback) // ✅ Corrected function
         : compiler.compileCPP(envData, code, callback); // ✅ Corrected function
-    } else if (lang === "Python") {
+    } else if (lang === "python") {
       input
         ? compiler.compilePythonWithInput(envData, code, input, callback) // ✅ Corrected function
         : compiler.compilePython(envData, code, callback); // ✅ Corrected function

@@ -13,7 +13,7 @@ const authMiddleware = (req, res, next) => {
 
     const accessToken = authHeader.split(" ")[1];
      
-    console.log("Acess token -> ", accessToken);
+    // console.log("Acess token -> ", accessToken);
 
     if (!accessToken) {
       return res

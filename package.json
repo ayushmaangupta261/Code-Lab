@@ -32,10 +32,12 @@
     "react-redux": "^9.2.0",
     "react-router": "^7.2.0",
     "react-router-dom": "^7.2.0",
+    "react-simple-typewriter": "^5.0.1",
     "react-type-animation": "^3.2.0",
     "redux-thunk": "^3.1.0",
     "run-concurrently": "^1.0.0",
     "socket.io-client": "^4.8.1",
+    "styled-components": "^6.1.15",
     "uuid": "^11.0.5"
   },
   "devDependencies": {

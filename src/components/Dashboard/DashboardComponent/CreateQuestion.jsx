@@ -10,6 +10,9 @@ import { createQuestion } from "../../../services/operations/codeApi.js";
 
 const CreateQuestion = () => {
   const { user } = useSelector((state) => state.auth);
+
+  console.log("User -> ", user);
+
   const {
     register,
     handleSubmit,
@@ -47,27 +50,32 @@ const CreateQuestion = () => {
     });
 
     try {
-        // Send the form data to the backend
-        console.log("Sending the data ");
-        
-        const response =  await dispatch(createQuestion({
-          ...data,
-          code: codeRef.current,
-      }));
+      // Send the form data to the backend
+      console.log("Sending the data ");
 
-        // if (response.success) {
-        //     console.log("✅ Question Created Successfully");
+      const response = await dispatch(
+        createQuestion(
+          {
+            ...data,
+            code: codeRef.current,
+          },
+          user?.accessToken // ✅ Pass token separately
+        )
+      );
 
-        //     // ✅ Reset form fields
-        //     // reset();
-        //     // codeRef.current = { java: "", cpp: "", python: "" };
-        // } else {
-        //     console.error("❌ Error creating question:", response.message);
-        // }
+      // if (response.success) {
+      //     console.log("✅ Question Created Successfully");
+
+      //     // ✅ Reset form fields
+      //     // reset();
+      //     // codeRef.current = { java: "", cpp: "", python: "" };
+      // } else {
+      //     console.error("❌ Error creating question:", response.message);
+      // }
     } catch (error) {
-        console.error("❌ Submission failed:", error);
+      console.error("❌ Submission failed:", error);
     }
-};
+  };
 
   return (
     <div>
@@ -106,13 +114,13 @@ const CreateQuestion = () => {
               <label className="block text-gray-100 text-sm font-medium mb-2">
                 Question Description
               </label>
-              <input
-                type="text"
+              <textarea
                 {...register("description", {
                   required: "Description is required",
                 })}
-                className="bg-gray-500 w-full rounded-md h-[2rem] px-1"
+                className="bg-gray-500 w-full rounded-md h-[3rem] px-1 "
               />
+
               {errors.description && (
                 <p className="text-red-500">{errors.description.message}</p>
               )}
