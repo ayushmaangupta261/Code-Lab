@@ -1,0 +1,14 @@
+/* ✅ Hide Xterm.js scrollbar */
+.xterm-viewport::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .xterm-viewport {
+    scrollbar-width: none; /* ✅ Hide scrollbar in Firefox */
+  }
+  
+  /* ✅ Ensure outer div scrollbar remains */
+  .custom-terminal {
+    overflow-y: auto;
+  }
+  

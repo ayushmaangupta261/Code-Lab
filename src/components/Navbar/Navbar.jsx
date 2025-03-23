@@ -39,9 +39,11 @@ const Navbar = () => {
                 <div className="flex space-x-6">
                     <button className="text-lg hover:scale-110 transition-all duration-300" onClick={() => navigate("/")}>Home</button>
                     <p className="text-lg hover:scale-110 transition-all duration-300">About</p>
-                    <button className="text-lg hover:scale-110 transition-all duration-300" onClick={() => navigate("/create-and-join")}>Let's Colab</button>
+                    <p className="text-lg hover:scale-110 transition-all duration-300">Contact</p>
+                    
 
                     <div>
+                        
                         {
                             !user && (
                                 <button className="text-lg hover:scale-110 transition-all duration-300" onClick={() => navigate("/auth")}>LogIn</button>
@@ -53,6 +55,7 @@ const Navbar = () => {
                             )
                         }
 
+
                     </div>
 
                     {
@@ -60,6 +63,11 @@ const Navbar = () => {
                             <button className="text-lg hover:scale-110 transition-all duration-300" onClick={() => navigate("/dashboard")}>Dashboard</button>
                         )
                     }
+                    {
+                            user &&(
+                                <button className="text-lg hover:scale-110 transition-all duration-300" onClick={() => navigate("/create-and-join")}>Let's Colab</button>
+                            )
+                        }
 
 
                 </div>

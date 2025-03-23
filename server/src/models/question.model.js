@@ -39,7 +39,11 @@ const questionSchema = Schema(
     solvedBy:{
       type: mongoose.Types.ObjectId,
       ref: "User"
-    }
+    },
+    // subjectName:{
+    //   type: String,
+    //   required: true,
+    // }
   },
   {
     timestamps: true,

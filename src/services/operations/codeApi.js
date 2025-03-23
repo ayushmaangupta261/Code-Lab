@@ -95,7 +95,7 @@ export const getAllAssignment = (token, instructor) => async (dispatch) => {
 
   try {
     dispatch(setAuthLoading(true));
-    // console.log("Going to fetch all the assignments -> ", token);
+    console.log("Going to fetch all the assignments -> ", token);
 
     if (!token) {
       throw new Error("Please login to access your assignments");
@@ -103,7 +103,7 @@ export const getAllAssignment = (token, instructor) => async (dispatch) => {
 
     const response = await apiConnector(
       "GET",
-      getAssignments_API,
+      getAssignments_API,  
       {},
       {
         Authorization: `Bearer ${token}`,
