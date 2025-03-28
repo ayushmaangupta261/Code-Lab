@@ -22,7 +22,7 @@ const TerminalComponent = () => {
     xterm.open(terminalRef.current);
     xtermRef.current = xterm;
 
-    const socket = io("http://localhost:5000", {
+    const socket = io("http://localhost:4000", {
       transports: ["websocket"],
       reconnection: true,
       reconnectionAttempts: 10,
@@ -51,7 +51,7 @@ const TerminalComponent = () => {
   return (
     <div
       ref={terminalRef}
-      className="w-full h-[250px] max-h-[80vh]  overflow-auto rounded-md shadow-lg custom-terminal"
+      className="w-full h-[250px] max-h-[80vh]  overflow-auto  shadow-lg custom-terminal"
     ></div>
   );
 };

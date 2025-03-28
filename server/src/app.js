@@ -39,16 +39,15 @@ import codeingRoutes from "./routes/code.routes.js";
 import instituteRoutes from "./routes/institute.routes.js";
 import aiRoutes from "./routes/ai.routes.js";
 import assignmentRoutes from "./routes/assignment.routes.js";
-
+import codeColaborationRoutes from "./routes/codeColaboration.route.js";
 
 // route declaration
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/code", codeingRoutes);
 app.use("/api/v1/institute", instituteRoutes);
 app.use("/api/v1/ai-routes", aiRoutes);
+app.use("/api/v1/code-collaboration", codeColaborationRoutes);
 
 app.use("/api/v1/assignment", assignmentRoutes);
-
-
 
 export { app };

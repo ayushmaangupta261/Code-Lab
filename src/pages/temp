@@ -1,0 +1,19 @@
+<div className="asideInner flex flex-col gap-y-3">
+          <div className="logo">
+            <p className="text-3xl text-green-400">Code-Sync</p>
+          </div>
+
+          <div className="bg-gray-300 h-[2px] w-[15rem] mt-5 mr-auto"></div>
+
+          <div className="flex justify-start items-center mt-2">
+            <p>Connected</p>
+            {/* <img src={connected} alt="" className='w-[3rem] bg-gray-700 rounded-full' /> */}
+          </div>
+
+          {/*  Connected clients */}
+          <div className="clientLists h-auto flex flex-wrap gap-x-5 ">
+            {clients.map((client, index) => (
+              <Client userName={client.userName} key={client.socketId} />
+            ))}
+          </div>
+        </div>

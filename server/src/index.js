@@ -31,7 +31,7 @@ const server = createServer(app);
 // Initialize Socket.io and configure CORS settings
 const io = new Server(server, {
   cors: {
-    origin: [process.env.CORS_ORIGIN, "http://localhost:3000"], // Allow multiple origins
+    origin: [process.env.CORS_ORIGIN, "http://localhost:3000", "http://192.168.29.197:3000"], // Allow multiple origins
     methods: ["GET", "POST"],
     credentials: true, // Allow authentication
     allowedHeaders: ["Authorization", "Content-Type"], // Ensure required headers are allowed
@@ -51,7 +51,7 @@ app.get("/", (req, res) => {
 });
 
 // Start the server and connect to the database
-server.listen(port, async () => {
+server.listen(port, "0.0.0.0", async () => {
   await connectToDB(); // Ensure database connection before starting
   console.log(`Server is running on port ${port}`);
 });

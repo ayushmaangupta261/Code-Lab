@@ -30,8 +30,10 @@ const Editor = ({ socketRef, roomId, onCodeChange }) => {
     editorRef.current.on("change", (instance, changes) => {
       const { origin } = changes;
       const code = instance.getValue();
+      console.log("Code changed -> ", code);
       onCodeChange(code);
       if (origin !== "setValue") {
+        console.log("Emmiting -> ", roomId, code);
         socketRef.current.emit(ACTIONS.CODE_CHANGE, {
           roomId,
           code,
@@ -50,6 +52,7 @@ const Editor = ({ socketRef, roomId, onCodeChange }) => {
   useEffect(() => {
     if (socketRef.current) {
       socketRef.current.on(ACTIONS.CODE_CHANGE, ({ code }) => {
+        console.log("Received -> ", code);
         if (code !== null) {
           editorRef.current.setValue(code);
         }

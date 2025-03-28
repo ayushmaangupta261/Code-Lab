@@ -1,5 +1,6 @@
 import { spawn } from "@lydell/node-pty";
 import ACTIONS from "../constants/Actions.js"; // Import action constants
+import chaukidar from "chokidar";
 
 const userSocketMap = {}; // Store socket-user mappings
 
@@ -17,7 +18,7 @@ export function initializeSocket(io) {
     console.log(`New user connected: ${socket.id}`);
 
     /** ───────────────────────────────────────────────
-     *  Real-Time Collaboration Features
+     *  📝 Real-Time Code Collaboration Features
      *  ─────────────────────────────────────────────── */
     socket.on(ACTIONS.JOIN, ({ roomId, userName }) => {
       if (!roomId || !userName) return; // Prevent invalid data
@@ -34,6 +35,8 @@ export function initializeSocket(io) {
     });
 
     socket.on(ACTIONS.CODE_CHANGE, ({ roomId, code }) => {
+      console.log("Code change -> ", code);
+      console.log("Room id -> ", roomId);
       if (roomId) socket.to(roomId).emit(ACTIONS.CODE_CHANGE, { code });
     });
 
@@ -58,7 +61,7 @@ export function initializeSocket(io) {
     });
 
     /** ───────────────────────────────────────────────
-     *  PowerShell Terminal Integration
+     *  🖥 PowerShell Terminal Integration
      *  ─────────────────────────────────────────────── */
     console.log("User connected to terminal.");
 
@@ -71,54 +74,45 @@ export function initializeSocket(io) {
         name: "xterm-color",
         cols: 80,
         rows: 24,
-        cwd: "D:\\Web Development\\compiler\\code\\server\\temp", // ✅ Initial directory
+        cwd: "D:\\", // Set initial directory
         env: process.env,
       });
 
-      // Ensure PowerShell is set to the correct directory
+      // Force PowerShell to switch to D:\
       if (process.platform === "win32") {
-        ptyProcess.write('cd "D:\\Web Development\\compiler\\code\\server\\temp"\r\n');
-        ptyProcess.write("cls\r\n"); // Clear screen
+        ptyProcess.write("D:\r\n"); // Switch to D: drive
+        ptyProcess.write("cd D:\\\r\n"); // Change to D:\ directory
+        ptyProcess.write("cls\r\n"); // Clear screen for a clean start
       }
 
       // Send terminal output to frontend
       ptyProcess.onData((data) => {
-        if (socket.connected) {
-          socket.emit("output", data);
-        }
+        socket.emit("output", data);
       });
 
       // Receive input from frontend
       socket.on("input", (data) => {
-        try {
-          ptyProcess.write(data);
-        } catch (error) {
-          console.error("Error writing to terminal:", error);
-        }
+        ptyProcess.write(data);
       });
 
       // Resize terminal
       socket.on("resize", ({ cols, rows }) => {
-        try {
-          if (cols && rows) {
-            ptyProcess.resize(cols, rows);
-          }
-        } catch (error) {
-          console.error("Error resizing terminal:", error);
-        }
+        ptyProcess.resize(cols, rows);
       });
 
       // Cleanup on disconnect
       socket.on("disconnect", () => {
-        console.log("User disconnected from terminal.");
-        try {
-          ptyProcess.kill();
-        } catch (error) {
-          console.error("Error killing terminal process:", error);
-        }
+        console.log("User disconnected.");
+        ptyProcess.kill();
       });
     } catch (error) {
       console.error("Error initializing terminal:", error);
     }
+
+    // chaukidar
+    chaukidar.watch("./server/temp ").on("all", (event, path) => {
+      console.log(`File ${path} has been ${event}`);
+      io.emit("file:refresh", path); // Emitting file-changed event to all connected clients
+    });
   });
 }

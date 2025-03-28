@@ -71,10 +71,10 @@ const SubmitSolution = () => {
   }, [assignment]);
 
   return (
-    <div className=" mx-auto mt-[4rem] h-[83vh] flex gap-x-2  w-[90%]">
+    <div className=" mx-auto xl:mt-[4rem] h-full xl:h-[83vh] flex flex-col xl:flex-row  gap-x-2  w-[90%] pb-[5rem]">
       {/* Theory */}
       <div
-        className=" w-[30%] px-2 flex flex-col gap-y-4 overflow-y-auto "
+        className="  w-[90%] mx-auto xl:w-[30%] px-2 flex flex-col gap-y-4 overflow-y-auto "
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         <p className="flex flex-col text-justify">
@@ -92,39 +92,41 @@ const SubmitSolution = () => {
 
         {/* examples */}
         <div>
-          {assignment?.example?.map((sample) => (
-            // console.log("Sample -> ",sample)
-            <div className="flex flex-col gap-y-5">
-              {/* inputs */}
-              <div className="">
-                <p>Inputs :</p>
-                {sample?.input?.map((ip, index) => (
-                  <div>{ip}</div>
-                ))}
+          <div>
+            {assignment?.example?.map((sample) => (
+              // console.log("Sample -> ",sample)
+              <div className="flex flex-col gap-y-5">
+                {/* inputs */}
+                <div className="">
+                  <p>Inputs :</p>
+                  {sample?.input?.map((ip, index) => (
+                    <div>{ip}</div>
+                  ))}
+                </div>
+                {/* outputs */}
+                <div className="">
+                  <p>Outputs :</p>
+                  {sample?.output?.map((op, index) => (
+                    <div>{op}</div>
+                  ))}
+                </div>
+                {/* explanation */}
+                <div className="">
+                  <p>Explanation :</p>
+                  {sample?.explanation?.map((ep, index) => (
+                    <div>{ep}</div>
+                  ))}
+                </div>
               </div>
-              {/* outputs */}
-              <div className="">
-                <p>Outputs :</p>
-                {sample?.output?.map((op, index) => (
-                  <div>{op}</div>
-                ))}
-              </div>
-              {/* explanation */}
-              <div className="">
-                <p>Explanation :</p>
-                {sample?.explanation?.map((ep, index) => (
-                  <div>{ep}</div>
-                ))}
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
 
-      <div className="w-[1px] h-full bg-white"></div>
+      <div className="w-full xl:w-[1px]  xl:h-full bg-white"></div>
 
       {/* Editor */}
-      <div className="ml-[5rem] ">
+      <div className=" mx-auto xl:ml-[5rem] ">
         <div>
           {/* Language Selector & Run Button */}
           <div className="flex mb-4 gap-4  p-2">
@@ -138,18 +140,20 @@ const SubmitSolution = () => {
               <option value="python">Python</option>
             </select>
             <button
-              className="bg-green-500 text-white px-4 py-2 rounded"
+              className="bg-green-500 text-black px-4 py-2 rounded"
               onClick={handleCompile}
             >
               Run
             </button>
+
+            
           </div>
 
           {/* Code Editor */}
           <CodeMirror
             value={code}
             height="25rem"
-            width="50rem"
+            width="100%"
             theme={dracula}
             extensions={[
               language === "Java"
@@ -159,13 +163,13 @@ const SubmitSolution = () => {
                 : cpp(),
             ]}
             onChange={(value) => setCode(value)}
-            className="border rounded"
+            className="border w-[20rem] md:w-[40rem] lg:w-[50rem] rounded"
           />
         </div>
 
         {/* Input & Output */}
         <div>
-          <div className="grid grid-cols-2 gap-4 mt-4">
+          <div className="grid grid-cols-2 gap-4 mt-4  ">
             {/* input */}
             {/* <div>
               <label className="block font-medium mb-1">Input</label>
