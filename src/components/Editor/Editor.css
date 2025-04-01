@@ -1,0 +1,43 @@
+/* Custom Styling for CodeMirror Autocomplete */
+.CodeMirror-hints {
+    background-color: #221d1d; /* Dark background */
+    border: 1px solid #333;
+    color: #f8f8f2; /* ✅ Off-white text */
+    font-family: "Fira Code", monospace;
+    font-size: 14px;
+    max-height: 30vh; /* ✅ Restrict height to 60% of viewport height */
+    overflow-y: auto; /* ✅ Enable scrolling */
+    min-width: 5vw;
+}
+
+/* Webkit-based browsers (Chrome, Edge, Safari) */
+.CodeMirror-hints::-webkit-scrollbar {
+    width: 6px;
+}
+
+.CodeMirror-hints::-webkit-scrollbar-track {
+    background: #1e1e1e; /* Dark scrollbar track */
+}
+
+.CodeMirror-hints::-webkit-scrollbar-thumb {
+    background: #444; /* Dark gray scrollbar thumb */
+    border-radius: 3px;
+}
+
+.CodeMirror-hint {
+    padding: 5px 10px;
+    cursor: pointer;
+    color: #f8f8f2; /* ✅ Off-white text */
+}
+
+/* Hover effect */
+.CodeMirror-hint:hover {
+    background-color: #222; /* Highlight on hover */
+    color: #ffffff; /* Brighter white when hovered */
+}
+
+/* Highlight the selected suggestion */
+li.CodeMirror-hint-active {
+    background-color: #444 !important;
+    color: #ffffff !important; /* White text for selected item */
+}

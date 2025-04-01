@@ -51,7 +51,7 @@ const TerminalComponent = () => {
   return (
     <div
       ref={terminalRef}
-      className="w-full h-[250px] max-h-[80vh]  overflow-auto  shadow-lg custom-terminal"
+      className="w-full h-[200px] max-h-[80vh]  overflow-auto  shadow-lg custom-terminal"
     ></div>
   );
 };

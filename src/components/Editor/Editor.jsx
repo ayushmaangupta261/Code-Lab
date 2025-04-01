@@ -1,44 +1,115 @@
 import React, { useEffect, useRef } from "react";
 import Codemirror from "codemirror";
+import { getFiles } from "../../services/operations/codeEditorApi.js";
+import "./Editor.css";
+
+// ✅ Import required styles & themes
 import "codemirror/lib/codemirror.css";
 import "codemirror/theme/dracula.css";
+
+// ✅ Import language modes
 import "codemirror/mode/javascript/javascript";
+import "codemirror/mode/xml/xml";
+import "codemirror/mode/css/css";
+import "codemirror/mode/python/python";
+import "codemirror/mode/clike/clike";
+import "codemirror/mode/sql/sql";
+
+// ✅ Import autocomplete addons
+import "codemirror/addon/hint/show-hint";
+import "codemirror/addon/hint/javascript-hint";
+import "codemirror/addon/hint/html-hint";
+import "codemirror/addon/hint/css-hint";
+import "codemirror/addon/hint/sql-hint";
+import "codemirror/addon/hint/anyword-hint";
+import "codemirror/addon/hint/show-hint.css";
+
+// ✅ Auto-closing tags and brackets
 import "codemirror/addon/edit/closetag";
 import "codemirror/addon/edit/closebrackets";
+
+// ✅ Enable matching brackets & highlighting active line
+import "codemirror/addon/edit/matchbrackets";
+import "codemirror/addon/selection/active-line";
+
 import ACTIONS from "../../constants/Actions.js";
 
-const Editor = ({ socketRef, roomId, onCodeChange }) => {
+const Editor = ({
+  socketRef,
+  roomId,
+  onCodeChange,
+  language = "javascript",
+  selectedFile,
+}) => {
   const editorRef = useRef(null);
   const textareaRef = useRef(null);
+  const codeRef = useRef(""); // ✅ Stores code without re-rendering
+  const selectedFileContentRef = useRef(""); // ✅ Stores file content without re-rendering
+  const timeoutRef = useRef(null); // ✅ Prevents multiple backend calls
 
   useEffect(() => {
     if (!textareaRef.current) return;
 
-    // Initialize CodeMirror
+    const modeMap = {
+      javascript: "javascript",
+      python: "python",
+      java: "text/x-java",
+      cpp: "text/x-c++src",
+      sql: "sql",
+      html: "xml",
+    };
+
     editorRef.current = Codemirror.fromTextArea(textareaRef.current, {
-      mode: { name: "javascript", json: true },
+      mode: modeMap[language] || "javascript",
       theme: "dracula",
       autoCloseTags: true,
       autoCloseBrackets: true,
       lineNumbers: true,
+      matchBrackets: true,
+      styleActiveLine: true,
+      extraKeys: {
+        "Ctrl-Space": "autocomplete",
+      },
+      hintOptions: { completeSingle: false },
     });
 
-    // Ensure CodeMirror takes full height
-    editorRef.current.setSize("100%", "100%");
+    editorRef.current.setSize("100%", "370px");
 
-    // Listen for local code changes
-    editorRef.current.on("change", (instance, changes) => {
-      const { origin } = changes;
-      const code = instance.getValue();
-      console.log("Code changed -> ", code);
-      onCodeChange(code);
-      if (origin !== "setValue") {
-        console.log("Emmiting -> ", roomId, code);
-        socketRef.current.emit(ACTIONS.CODE_CHANGE, {
-          roomId,
-          code,
-        });
-      }
+    // ✅ Handle Code Changes Without Re-render
+    editorRef.current.on("change", (instance) => {
+      codeRef.current = instance.getValue(); // ✅ Store in ref instead of state
+      onCodeChange(codeRef.current);
+
+      // ✅ Emit CODE_CHANGE for real-time updates
+      socketRef.current.emit(ACTIONS.CODE_CHANGE, {
+        roomId,
+        code: codeRef.current,
+      });
+
+      // ✅ Ensure selectedFile is valid before sending to backend
+      // if (!selectedFile) {
+      //   console.warn("⚠️ No file selected! Skipping save.");
+      //   return;
+      // }
+
+      // ✅ Debounced Backend Call (Prevents Repeated Calls)
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      timeoutRef.current = setTimeout(() => {
+        if (codeRef.current !== selectedFileContentRef.current) {
+          console.log("🚀 Sending Code to Backend:", codeRef.current);
+          console.log(`Selected file: ${selectedFile}`);
+
+          // ✅ Ensure socket is connected before emitting
+          if (socketRef.current && socketRef.current.connected) {
+            socketRef.current.emit(ACTIONS.FILE_CHANGE, {
+              path: selectedFile,
+              content: codeRef.current,
+            });
+          } else {
+            console.error("❌ Socket is not connected. Cannot send file data.");
+          }
+        }
+      }, 5000);
     });
 
     return () => {
@@ -46,15 +117,16 @@ const Editor = ({ socketRef, roomId, onCodeChange }) => {
         editorRef.current.toTextArea();
         editorRef.current = null;
       }
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
-  }, []);
+  }, [language]);
 
   useEffect(() => {
     if (socketRef.current) {
       socketRef.current.on(ACTIONS.CODE_CHANGE, ({ code }) => {
-        console.log("Received -> ", code);
         if (code !== null) {
           editorRef.current.setValue(code);
+          codeRef.current = code;
         }
       });
     }
@@ -62,12 +134,42 @@ const Editor = ({ socketRef, roomId, onCodeChange }) => {
     return () => {
       socketRef.current.off(ACTIONS.CODE_CHANGE);
     };
-  }, [socketRef.current]);
+  }, [socketRef]);
+
+  // ✅ Fetch File Content Without Re-rendering
+  const getFileContents = async () => {
+    if (!selectedFile) {
+      console.warn("⚠️ No file selected! Cannot fetch content.");
+      return;
+    }
+
+    try {
+      console.log(`📂 Fetching content for: ${selectedFile}`);
+      const fileContent = await getFiles(selectedFile);
+
+      if (fileContent !== null && fileContent !== undefined) {
+        selectedFileContentRef.current = fileContent;
+        editorRef.current.setValue(fileContent);
+        codeRef.current = fileContent;
+        console.log("✅ File content loaded successfully.");
+      } else {
+        console.error("❌ Empty response from backend.");
+      }
+    } catch (error) {
+      console.error("❌ Error fetching file content:", error);
+    }
+  };
+
+  useEffect(() => {
+    getFileContents();
+  }, [selectedFile]);
 
   return (
-    <div className="h-[350px] w-full">
-      <textarea ref={textareaRef} className="hidden" />
-      <div className=" w-full" id="editor-container"></div>
+    <div className="h-[370px] border border-gray-700 rounded-md overflow-hidden">
+      {/* {selectedFile?.length > 0 && ( */}
+        <textarea ref={textareaRef} className="hidden" />
+      {/* )} */}
+      <div className="w-full h-full" id="editor-container"></div>
     </div>
   );
 };

@@ -1,7 +1,5 @@
-
 import fs from "fs/promises";
 import path from "path";
-
 
 // file system
 const generateFileTree = async (req, res) => {
@@ -16,8 +14,8 @@ const generateFileTree = async (req, res) => {
 
     const buildTree = async (currentDir, currentTree) => {
       try {
-        console.log("Hello");
-        
+        // console.log("Hello");
+
         const files = await fs.readdir(currentDir);
         for (const file of files) {
           const filePath = path.join(currentDir, file);
@@ -35,7 +33,7 @@ const generateFileTree = async (req, res) => {
       }
     };
 
-    await buildTree("./server/temp", tree);
+    await buildTree("./server/projects", tree);
     return res.json({ tree }); // Send the generated tree as a response
   } catch (error) {
     console.error("Error generating file tree:", error.message);
@@ -43,7 +41,42 @@ const generateFileTree = async (req, res) => {
   }
 };
 
+// get files
+const getFiles = async (req, res) => {
+  try {
+    const { path } = req.body;
 
+    console.log("Path of file -> ", path);
 
+    if (!path) {
+      return res.status(400).json({ error: "Path is required" });
+    }
 
-export { generateFileTree };
+    let content = await fs.readFile(`./server/projects${path}`, "utf-8");
+    console.log("content of file -> ", content);
+
+    if (content.length == 0) {
+      content = " ";
+    }
+
+    if (!content) {
+      return res.status(400).json({
+        message: "File not found",
+        success: false,
+      });
+    }
+
+    return res.status(200).json({
+      content,
+      path,
+      success: true,
+    });
+  } catch (error) {
+    return res.status(404).json({
+      message: error.message,
+      success: false, // Error in reading the file
+    });
+  }
+};
+
+export { generateFileTree, getFiles };
