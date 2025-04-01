@@ -488,16 +488,51 @@ const EditorPage = () => {
   }
 
   const [selectedFile, setSelectedFile] = useState("");
+  const [showMenu, setShowMenu] = useState("clients");
 
-  console.log(`Se;lected file ${selectedFile}`)
+  const handleMenuToggle = (menu) => {
+    console.log("handleMenuToggle , ", menu);
+    setShowMenu(menu);
+  };
+
+  console.log(`Selected file ${selectedFile}`);
 
   return (
     <div className="mainwrap text-gray-100 flex h-[39rem] w-full gap-x-3 mt-[4rem] overflow-hidden ">
       <div className="aside flex flex-col justify-between  bg-gray-700 py-5 px-5 rounded-br-2xl rounded-tr-2xl w-[19%]">
         {/* Styled Selected File Display */}
         <div className="flex flex-col gap-y-3 mx-auto">
-          <div>
-            <FileTree onSelect={(path) => setSelectedFile(path)} />
+          {/* menu toggle */}
+          <div className="w-[16rem] py-2 px-2 flex gap-x-2 bg-gray-800 rounded-md overflow-x-auto scrollbar-none">
+            <button
+              className="w-[4rem] text-center bg-green-500 text-black px-2 py-1 rounded-md hover:scale-105 transition-all duration-300"
+              onClick={() => handleMenuToggle("clients")}
+            >
+              Clients
+            </button>
+            <button
+              className="w-[4rem] text-center bg-green-500 text-black px-2 py-1 rounded-md hover:scale-105 transition-all duration-300"
+              onClick={() => handleMenuToggle("files")}
+            >
+              Files
+            </button>
+          </div>
+
+          {/* show menu */}
+          <div className="w-[16rem] overflow-y-auto">
+            <div>
+              {/* files */}
+              {showMenu === "files" && (
+                <FileTree onSelect={(path) => setSelectedFile(path)} />
+              )}
+            </div>
+            {/* clients */}
+            <div className="flex gap-x-2 flex-wrap">
+              {showMenu === "clients" &&
+                clients.map((client) => (
+                  <Client userName={client.userName} key={client.socketId} />
+                ))}
+            </div>
           </div>
         </div>
 
@@ -527,14 +562,15 @@ const EditorPage = () => {
           <p className="truncate w-full">
             {selectedFile.replaceAll("/", " > ") || (
               <p>
-                No file selected, <span className="text-amber-300">Please select a file !</span>
+                No file selected,{" "}
+                <span className="text-amber-300">Please select a file !</span>
               </p>
             )}
           </p>
         </div>
 
+        {/* Code Editor */}
         <div className=" flex flex-col rounded-lg  ">
-          {/* Code Editor */}
           <div className="border border-amber-200 w-[1202px] mt-1">
             <Editor
               socketRef={socketRef}

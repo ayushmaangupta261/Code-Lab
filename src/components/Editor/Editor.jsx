@@ -420,27 +420,42 @@ const Editor = ({ socketRef, roomId, onCodeChange, language = "javascript", sele
   }, []); // ✅ Runs only once on mount
 
   // ✅ Handle Code Change & Real-time Collaboration
+  // const handleCodeChange = useCallback((instance) => {
+  //   const newCode = instance.getValue();
+  //   if (newCode === codeRef.current) return; // ✅ Prevent unnecessary updates
+  //   codeRef.current = newCode;
+  //   onCodeChange(newCode);
+
+  //   if (socketRef.current?.connected) {
+  //     socketRef.current.emit(ACTIONS.CODE_CHANGE, { roomId, code: newCode });
+  //   } else {
+  //     console.error("❌ Socket is disconnected.");
+  //   }
+
+  //   // ✅ Prevent frequent API calls
+  //   if (timeoutRef.current) clearTimeout(timeoutRef.current);
+  //   timeoutRef.current = setTimeout(() => {
+  //     if (newCode !== selectedFileContentRef.current) {
+  //       console.log("🚀 Saving Code:", newCode);
+  //       socketRef.current.emit(ACTIONS.FILE_CHANGE, { path: selectedFile, content: newCode });
+  //     }
+  //   }, 3000);
+  // }, [roomId, selectedFile, onCodeChange]);
+
   const handleCodeChange = useCallback((instance) => {
     const newCode = instance.getValue();
-    if (newCode === codeRef.current) return; // ✅ Prevent unnecessary updates
     codeRef.current = newCode;
     onCodeChange(newCode);
-
+  
     if (socketRef.current?.connected) {
+      console.log("📤 Emitting CODE_CHANGE event:", newCode);
       socketRef.current.emit(ACTIONS.CODE_CHANGE, { roomId, code: newCode });
     } else {
-      console.error("❌ Socket is disconnected.");
+      console.error("❌ WebSocket is disconnected!");
     }
-
-    // ✅ Prevent frequent API calls
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    timeoutRef.current = setTimeout(() => {
-      if (newCode !== selectedFileContentRef.current) {
-        console.log("🚀 Saving Code:", newCode);
-        socketRef.current.emit(ACTIONS.FILE_CHANGE, { path: selectedFile, content: newCode });
-      }
-    }, 3000);
   }, [roomId, selectedFile, onCodeChange]);
+
+  
 
   // ✅ Attach Change Event Listener (Runs Once)
   useEffect(() => {

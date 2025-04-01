@@ -4,6 +4,8 @@ import { useLocation } from "react-router";
 const Client = ({ userName }) => {
   //   const location = useLocation();
   //   const userName = location.state?.userName || "Guest"; // Default value if undefined
+  console.log(`Client userName: ${userName}`);
+  
 
   const avatarUrl = `https://api.dicebear.com/7.x/initials/svg?seed=${userName}`;
 
