@@ -23,6 +23,7 @@ import Settings from "./components/Dashboard/DashboardComponent/Settings.jsx";
 import Notification from "./components/Dashboard/DashboardComponent/Notification.jsx";
 import SubmitSolution from "./components/Editor/SubmitSolution.jsx";
 import CreateQuestion from "./components/Dashboard/DashboardComponent/CreateQuestion.jsx";
+import About from "./pages/AboutUs.jsx";
 
 const router = createBrowserRouter([
   {
@@ -48,6 +49,10 @@ const router = createBrowserRouter([
       {
         path: "/editor/submitSolution",
         element: <SubmitSolution />,
+      },
+      {
+        path: "/about-us",
+        element: <About />,
       },
       {
         path: "/dashboard",

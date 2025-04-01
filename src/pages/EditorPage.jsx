@@ -499,25 +499,50 @@ const EditorPage = () => {
 
   return (
     <div className="mainwrap text-gray-100 flex h-[39rem] w-full gap-x-3 mt-[4rem] overflow-hidden ">
-      <div className="aside flex flex-col justify-between  bg-gray-700 py-5 px-5 rounded-br-2xl rounded-tr-2xl w-[19%]">
+      <div className="aside flex flex-col justify-between  bg-gray-700 py-5 px-5 rounded-2xl  w-[19%]">
         {/* Styled Selected File Display */}
         <div className="flex flex-col gap-y-3 mx-auto">
           {/* menu toggle */}
-          <div className="w-[16rem] py-2 px-2 flex gap-x-2 bg-gray-800 rounded-md overflow-x-auto scrollbar-none">
+          <div className="w-[16rem] py-2 px-2 flex justify-between bg-gray-800 rounded-md overflow-x-auto scrollbar-none">
+            {/* Clients */}
             <button
-              className="w-[4rem] text-center bg-green-500 text-black px-2 py-1 rounded-md hover:scale-105 transition-all duration-300"
+              className={`w-[4rem] text-center px-2 py-1 rounded-md hover:scale-105 transition-all duration-300
+          ${
+            showMenu === "clients"
+              ? "bg-green-700 text-white"
+              : "bg-green-500 text-black"
+          }`}
               onClick={() => handleMenuToggle("clients")}
             >
               Clients
             </button>
+
+            {/* Files */}
             <button
-              className="w-[4rem] text-center bg-green-500 text-black px-2 py-1 rounded-md hover:scale-105 transition-all duration-300"
+              className={`w-[4rem] text-center px-2 py-1 rounded-md hover:scale-105 transition-all duration-300
+          ${
+            showMenu === "files"
+              ? "bg-green-700 text-white"
+              : "bg-green-500 text-black"
+          }`}
               onClick={() => handleMenuToggle("files")}
             >
               Files
             </button>
-          </div>
 
+            {/* Live */}
+            <button
+              className={`w-[4rem] text-center px-2 py-1 rounded-md hover:scale-105 transition-all duration-300
+          ${
+            showMenu === "live"
+              ? "bg-green-700 text-white "
+              : "bg-green-500 text-black"
+          }`}
+              onClick={() => handleMenuToggle("live")}
+            >
+              Live
+            </button>
+          </div>
           {/* show menu */}
           <div className="w-[16rem] overflow-y-auto">
             <div>
@@ -527,12 +552,13 @@ const EditorPage = () => {
               )}
             </div>
             {/* clients */}
-            <div className="flex gap-x-2 flex-wrap">
+            <div className="flex gap-x-2 flex-wrap mx-auto bg-gray-800 px-2 rounded-md">
               {showMenu === "clients" &&
                 clients.map((client) => (
                   <Client userName={client.userName} key={client.socketId} />
                 ))}
             </div>
+            {/* Video chat */}
           </div>
         </div>
 
