@@ -17,6 +17,7 @@
     "@codemirror/lang-java": "^6.0.1",
     "@codemirror/lang-python": "^6.1.7",
     "@reduxjs/toolkit": "^2.5.1",
+    "@udecode/resizable": "^22.0.2",
     "@uiw/codemirror-theme-dracula": "^4.23.8",
     "@uiw/react-codemirror": "^4.23.8",
     "axios": "^1.7.9",

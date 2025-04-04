@@ -16,7 +16,7 @@ export function initializeSocket(io) {
   }
 
   io.on("connection", (socket) => {
-    console.log(`New user connected: ${socket.id}`);
+    // console.log(`New user connected: ${socket.id}`);
 
     /** ───────────────────────────────────────────────
      *  📝 Real-Time Code Collaboration Features
@@ -59,23 +59,46 @@ export function initializeSocket(io) {
     // save to the file
     socket.on(ACTIONS.FILE_CHANGE, async ({ path, content }) => {
       try {
-        console.log("Files to save -> ", content, " Path -> ", path);
+        // console.log("Files to save -> ", content, " Path -> ", path);
         await fs.writeFile(`./server/projects/${path}`, content); // ✅ Corrected FS usage
-        console.log(`File saved: ./projects/${path}`);
+        // console.log(`File saved: ./projects/${path}`);
       } catch (error) {
         console.error("Error saving file:", error);
       }
     });
 
+     /** ───────────────────────────────────────────────
+     *  🗑️ File Deletion Logic
+     *  ─────────────────────────────────────────────── */
+     socket.on(ACTIONS.DELETE_FILE, async ({ path }) => {
+      try {
+        const fullPath = `./server/projects/${path}`;
+        const stats = await fs.stat(fullPath);
+    
+        if (stats.isDirectory()) {
+          await fs.rm(fullPath, { recursive: true, force: true });
+        } else {
+          await fs.unlink(fullPath);
+        }
+    
+        console.log("files deleted successfully")
+        // io.emit(ACTIONS.FILE_DELETED, path);
+
+        io.emit("file:refresh");
+      } catch (error) {
+        console.error("Error deleting file:", error);
+      }
+    });
+
     socket.on("disconnect", () => {
       delete userSocketMap[socket.id];
-      console.log(`User disconnected: ${socket.id}`);
+      // console.log(`User disconnected: ${socket.id}`);
     });
 
     /** ───────────────────────────────────────────────
      *  🖥 PowerShell Terminal Integration
      *  ─────────────────────────────────────────────── */
-    console.log("User connected to terminal.");
+    // console.log("User connected to terminal.");
 
     try {
       // Use PowerShell in Windows, Bash in Linux/Mac
@@ -116,7 +139,7 @@ export function initializeSocket(io) {
 
       // Cleanup on disconnect
       socket.on("disconnect", () => {
-        console.log("User disconnected.");
+        // console.log("User disconnected.");
         ptyProcess.kill();
       });
     } catch (error) {
@@ -125,7 +148,7 @@ export function initializeSocket(io) {
 
     // chaukidar
     chaukidar.watch("./server/projects").on("all", (event, path) => {
-      console.log(`File ${path} has been ${event}`);
+      // console.log(`File ${path} has been ${event}`);
       io.emit("file:refresh", path); // Emitting file-changed event to all connected clients
     });
   });

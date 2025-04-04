@@ -1,6 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
 
+
 // file system
 const generateFileTree = async (req, res) => {
   try {
@@ -79,4 +80,50 @@ const getFiles = async (req, res) => {
   }
 };
 
-export { generateFileTree, getFiles };
+// delete file
+const deleteFile = async (req, res) => {
+  try {
+    const { selectedFile } = req.body;
+
+    if (!selectedFile) {
+      return res.status(400).json({
+        message: "Selected file or folder is required",
+        success: false,
+      });
+    }
+
+    // Construct the absolute path
+    const filePath = path.join(
+      process.cwd(),
+      "server",
+      "projects",
+      selectedFile
+    );
+    console.log("Path to be deleted -> ", filePath);
+
+    // Check if the file/folder exists
+    try {
+      await fs.access(filePath); // If this fails, the file doesn't exist
+    } catch (error) {
+      return res
+        .status(404)
+        .json({ success: false, message: "File or folder not found!" });
+    }
+
+    // Delete file or folder (recursively for folders)
+    await fs.rm(filePath, { recursive: true, force: true });
+
+    io.emit("file:deleted", filePath); // 🔥 Notify all clients
+
+    console.log("Deleted successfully")
+
+    return res
+      .status(200)
+      .json({ success: true, message: "File or folder deleted successfully!" });
+  } catch (error) {
+    console.error("[SERVER] Error deleting file/folder:", error.message);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export { generateFileTree, getFiles, deleteFile };

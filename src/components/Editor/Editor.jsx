@@ -419,43 +419,39 @@ const Editor = ({ socketRef, roomId, onCodeChange, language = "javascript", sele
     };
   }, []); // ✅ Runs only once on mount
 
+  // ✅ Join Room When Component Mounts
+  useEffect(() => {
+    if (socketRef.current?.connected) {
+      console.log(`📡 Joining Room: ${roomId}`);
+      socketRef.current.emit(ACTIONS.JOIN, { roomId });
+    } else {
+      console.error("❌ WebSocket is not connected!");
+    }
+  }, [socketRef, roomId]);
+
   // ✅ Handle Code Change & Real-time Collaboration
-  // const handleCodeChange = useCallback((instance) => {
-  //   const newCode = instance.getValue();
-  //   if (newCode === codeRef.current) return; // ✅ Prevent unnecessary updates
-  //   codeRef.current = newCode;
-  //   onCodeChange(newCode);
-
-  //   if (socketRef.current?.connected) {
-  //     socketRef.current.emit(ACTIONS.CODE_CHANGE, { roomId, code: newCode });
-  //   } else {
-  //     console.error("❌ Socket is disconnected.");
-  //   }
-
-  //   // ✅ Prevent frequent API calls
-  //   if (timeoutRef.current) clearTimeout(timeoutRef.current);
-  //   timeoutRef.current = setTimeout(() => {
-  //     if (newCode !== selectedFileContentRef.current) {
-  //       console.log("🚀 Saving Code:", newCode);
-  //       socketRef.current.emit(ACTIONS.FILE_CHANGE, { path: selectedFile, content: newCode });
-  //     }
-  //   }, 3000);
-  // }, [roomId, selectedFile, onCodeChange]);
-
   const handleCodeChange = useCallback((instance) => {
     const newCode = instance.getValue();
+    if (newCode === codeRef.current) return; // ✅ Prevent unnecessary updates
     codeRef.current = newCode;
     onCodeChange(newCode);
-  
+
     if (socketRef.current?.connected) {
       console.log("📤 Emitting CODE_CHANGE event:", newCode);
       socketRef.current.emit(ACTIONS.CODE_CHANGE, { roomId, code: newCode });
     } else {
-      console.error("❌ WebSocket is disconnected!");
+      console.error("❌ WebSocket is disconnected.");
     }
-  }, [roomId, selectedFile, onCodeChange]);
 
-  
+    // ✅ Prevent frequent API calls
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => {
+      if (newCode !== selectedFileContentRef.current) {
+        console.log("🚀 Saving Code:", newCode);
+        socketRef.current.emit(ACTIONS.FILE_CHANGE, { path: selectedFile, content: newCode });
+      }
+    }, 3000);
+  }, [roomId, selectedFile, onCodeChange]);
 
   // ✅ Attach Change Event Listener (Runs Once)
   useEffect(() => {
@@ -468,18 +464,36 @@ const Editor = ({ socketRef, roomId, onCodeChange, language = "javascript", sele
   }, [handleCodeChange]);
 
   // ✅ Handle Incoming CODE_CHANGE Events
+  // useEffect(() => {
+  //   console.log("Socketref->", socketRef.current);
+  //   if (socketRef.current) {
+  //     console.log("��� Adding listener for CODE_CHANGE");
+  //     socketRef.current.on(ACTIONS.CODE_CHANGE, ({ code }) => {
+  //       console.log("📥 Incoming CODE_CHANGE event:", code);
+
+  //       if (editorRef.current && code !== codeRef.current) {
+  //         editorRef.current.setValue(code);
+  //         codeRef.current = code;
+  //       }
+  //     });
+
+  //     return () => {
+  //       console.log("🔄 Removing listener for CODE_CHANGE");
+  //       socketRef.current.off(ACTIONS.CODE_CHANGE);
+  //     };
+  //   }
+  // }, [socketRef]);
+
   useEffect(() => {
     if (socketRef.current) {
       socketRef.current.on(ACTIONS.CODE_CHANGE, ({ code }) => {
-        // console.log(`Incoming code ${editorRef.current.getValue()}`)
-        // console.log(`Code Ref code ${codeRef.current}`)
-
-        if (editorRef.current && code !== codeRef.current) {
-          editorRef.current.setValue(code);
+        console.log("📥 Received CODE_CHANGE:", code);
+        if (code !== codeRef.current) {
           codeRef.current = code;
+          editorRef.current.setValue(code);
         }
       });
-
+  
       return () => {
         socketRef.current.off(ACTIONS.CODE_CHANGE);
       };
@@ -523,3 +537,4 @@ const Editor = ({ socketRef, roomId, onCodeChange, language = "javascript", sele
 };
 
 export default Editor;
+

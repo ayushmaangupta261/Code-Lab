@@ -1,7 +1,8 @@
 import { apiConnector } from "../apiConnector";
 
 import { codeEditorEndpoints } from "../endPoints/codeEditorEndpoints.js";
-const { GET_FILE_TREE_API, GET_FILE_API } = codeEditorEndpoints;
+const { GET_FILE_TREE_API, GET_FILE_API, DELETE_FILE_API } =
+  codeEditorEndpoints;
 
 export const getFileTreeStructure = async () => {
   try {
@@ -31,8 +32,24 @@ export const getFiles = async (selectedFile) => {
     }
 
     return response.data.content;
-
   } catch (err) {
     console.log("Error during fetching files -> ", err);
+  }
+};
+
+// delete files
+export const deleteFile = async (selectedFile) => {
+  try {
+    console.log("File to delete -> ", selectedFile);
+
+    const response = await apiConnector("DELETE", DELETE_FILE_API, {
+      selectedFile,
+    });
+
+    console.log("Response: ", response);
+
+    return response.data;
+  } catch (error) {
+    console.log("Error -> ", error);
   }
 };

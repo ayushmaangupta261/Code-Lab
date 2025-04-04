@@ -6,6 +6,9 @@ const ACTIONS = {
     SYNC_CODE: "sync-code",
     LEAVE: "leave",
     FILE_CHANGE: "file-change",
+    DELETE_FILE: "delete-file",
+    FILE_DELETED:"file-deleted",
+    ERROR:"error"
   };
   
   export default ACTIONS;

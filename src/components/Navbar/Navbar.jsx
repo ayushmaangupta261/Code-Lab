@@ -108,6 +108,14 @@ const Navbar = () => {
         >
           Colab
         </button>
+
+        <button
+          className="text-lg hover:scale-110 transition-all duration-300"
+          onClick={() => navigate("/dashboard")}
+        >
+          Profile
+        </button>
+
         <div>
           {!user && (
             <button
@@ -126,9 +134,6 @@ const Navbar = () => {
             </button>
           )}
         </div>
-        <button className="text-lg hover:scale-110 transition-all duration-300">
-          Profile
-        </button>
       </div>
     </>
   );
