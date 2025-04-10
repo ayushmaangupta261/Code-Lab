@@ -4,6 +4,8 @@ import chaukidar from "chokidar";
 import fs from "fs/promises"; // ✅ Import the correct module
 
 const userSocketMap = {}; // Store socket-user mappings
+const emailToSocketMapping = new Map();
+const socketToEmailMapping = new Map();
 
 export function initializeSocket(io) {
   // Function to get all connected clients in a room
@@ -67,32 +69,27 @@ export function initializeSocket(io) {
       }
     });
 
-     /** ───────────────────────────────────────────────
+    /** ───────────────────────────────────────────────
      *  🗑️ File Deletion Logic
      *  ─────────────────────────────────────────────── */
-     socket.on(ACTIONS.DELETE_FILE, async ({ path }) => {
+    socket.on(ACTIONS.DELETE_FILE, async ({ path }) => {
       try {
         const fullPath = `./server/projects/${path}`;
         const stats = await fs.stat(fullPath);
-    
+
         if (stats.isDirectory()) {
           await fs.rm(fullPath, { recursive: true, force: true });
         } else {
           await fs.unlink(fullPath);
         }
-    
-        console.log("files deleted successfully")
+
+        console.log("files deleted successfully");
         // io.emit(ACTIONS.FILE_DELETED, path);
 
         io.emit("file:refresh");
       } catch (error) {
         console.error("Error deleting file:", error);
       }
-    });
-
-    socket.on("disconnect", () => {
-      delete userSocketMap[socket.id];
-      // console.log(`User disconnected: ${socket.id}`);
     });
 
     /** ───────────────────────────────────────────────
@@ -150,6 +147,67 @@ export function initializeSocket(io) {
     chaukidar.watch("./server/projects").on("all", (event, path) => {
       // console.log(`File ${path} has been ${event}`);
       io.emit("file:refresh", path); // Emitting file-changed event to all connected clients
+    });
+
+    //----------------------------------------------------------------------------------------------------
+
+    // start the call
+    socket.on("join-call", (data) => {
+      const { roomId, emailId } = data;
+      console.log(`User -> ${emailId} joined room -> ${roomId}`);
+      emailToSocketMapping.set(emailId, socket.id);
+      socketToEmailMapping.set(socket.id, emailId);
+      socket.join(roomId);
+      socket.emit("joined-call", { roomId });
+      socket.broadcast.to(roomId).emit("user-joined", { emailId });
+    });
+
+    // Handle call event
+    socket.on("call-user", (data) => {
+      const { emailId, offer } = data;
+      console.log("Email in call user -> ", emailId);
+      // console.log("Offer in call user -> ",offer)
+
+      const fromEmail = socketToEmailMapping.get(socket.id);
+      const socketId = emailToSocketMapping.get(emailId);
+      socket
+        .to(socketId)
+        .emit("incoming-call", { from: fromEmail, offer: offer });
+    });
+
+    // accept the call
+    socket.on("call-accepted", (data) => {
+      const { emailId, ans } = data;
+      const socketId = emailToSocketMapping.get(emailId);
+      socket.to(socketId).emit("call-accepted", { ans });
+    });
+
+    // negotiation
+    socket.on("negotiation-offer", ({ emailId, offer }) => {
+      io.to(users[emailId]).emit("negotiation-offer", {
+        emailId: socketToEmail[socket.id],
+        offer,
+      });
+    });
+
+    // negotiation-answer
+    socket.on("negotiation-answer", ({ emailId, ans }) => {
+      io.to(users[emailId]).emit("negotiation-answer", {
+        ans,
+      });
+    });
+
+    //----------------------------------------------------------------------
+    // Disconnect the call
+    socket.on("disconnect", () => {
+      delete userSocketMap[socket.id];
+      // console.log(`User disconnected: ${socket.id}`);
+      for (const [email, id] of emailToSocketMapping.entries()) {
+        if (id === socket.id) {
+          emailToSocketMapping.delete(email);
+          break;
+        }
+      }
     });
   });
 }

@@ -1,7 +1,7 @@
 import { apiConnector } from "../apiConnector";
 
 import { codeEditorEndpoints } from "../endPoints/codeEditorEndpoints.js";
-const { GET_FILE_TREE_API, GET_FILE_API, DELETE_FILE_API } =
+const { GET_FILE_TREE_API, GET_FILE_API, DELETE_FILE_API, CREATE_FILE_API,CREATE_FOLDER_API } =
   codeEditorEndpoints;
 
 export const getFileTreeStructure = async () => {
@@ -53,3 +53,47 @@ export const deleteFile = async (selectedFile) => {
     console.log("Error -> ", error);
   }
 };
+
+// create file
+export const createFile = async (selectedFile) => {
+  try {
+    console.log("File in api-> ",selectedFile);
+
+    if(!selectedFile){
+      throw new Error("Please select a file");
+    }
+
+    const response = await apiConnector("POST", CREATE_FILE_API, {
+      selectedFile,
+    });
+
+    console.log("Response -> ",response);
+
+    return;
+    
+  } catch (error) {
+    console.log("Error -> ",error);
+  }
+}
+
+// create folder
+ export const createFolder = async (selectedFolder) => {
+  try {
+    console.log("Folder in api-> ",selectedFolder);
+
+    if(!selectedFolder){
+      throw new Error("Please select a folder");
+    }
+
+    const response = await apiConnector("POST", CREATE_FOLDER_API, {
+      selectedFolder,
+    });
+
+    console.log("Response -> ",response);
+
+    return;
+    
+  } catch (error) {
+    console.log("Error -> ",error);
+  }
+}

@@ -1,6 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
-
+import { getIOInstance } from "../webSocket/SocketStore.js";
+import { log } from "console";
 
 // file system
 const generateFileTree = async (req, res) => {
@@ -113,9 +114,12 @@ const deleteFile = async (req, res) => {
     // Delete file or folder (recursively for folders)
     await fs.rm(filePath, { recursive: true, force: true });
 
-    io.emit("file:deleted", filePath); // 🔥 Notify all clients
+    const io = getIOInstance();
+    if (io) {
+      io.emit("file:refresh");
+    }
 
-    console.log("Deleted successfully")
+    console.log("Deleted successfully");
 
     return res
       .status(200)
@@ -126,4 +130,99 @@ const deleteFile = async (req, res) => {
   }
 };
 
-export { generateFileTree, getFiles, deleteFile };
+// create file
+const createFile = (req, res) => {
+  try {
+    const { selectedFile } = req.body;
+    console.log("Creating File -> ", selectedFile);
+
+    if (!selectedFile) {
+      return res.status(400).json({
+        message: "Selected file or folder is required",
+        success: false,
+      });
+    }
+
+    // Construct the absolute path
+    const filePath = path.join(
+      process.cwd(),
+      "server",
+      "projects",
+      selectedFile
+    );
+
+    console.log("Full path -> ", filePath);
+
+    fs.writeFile(filePath, "");
+
+    console.log("File created -> ", filePath);
+
+    const io = getIOInstance();
+    if (io) {
+      io.emit("file:refresh");
+    }
+
+    return res.status(200).json({
+      message: "File created successfully",
+      success: true,
+      // path: filePath,
+    });
+  } catch (error) {
+    console.log("Error -> ", error);
+    return res.json(400).json({
+      message: error.message,
+      success: false, // Error in creating the file
+    });
+  }
+};
+
+// create file
+const createFolder = (req, res) => {
+  try {
+    const { selectedFolder } = req.body;
+    console.log("Creating File -> ", selectedFolder);
+
+    if (!selectedFolder) {
+      return res.status(400).json({
+        message: "Selected file or folder is required",
+        success: false,
+      });
+    }
+
+    // Construct the absolute path
+    const folderPath = path.join(
+      process.cwd(),
+      "server",
+      "projects",
+      selectedFolder
+    );
+
+    console.log("Full path -> ", folderPath);
+
+    fs.mkdir(folderPath, { recursive: true });
+
+    console.log("File created -> ", folderPath);
+
+    const io = getIOInstance();
+    if (io) {
+      io.emit("file:refresh");
+    }
+
+    console.log("Refresh sent");
+    
+
+    return res.status(200).json({
+      message: "Folder created successfully",
+      success: true,
+      // path: filePath,
+    });
+  } catch (error) {
+    console.log("Error -> ", error);
+    return res.json(400).json({
+      message: error.message,
+      success: false, // Error in creating the file
+    });
+  }
+};
+
+export { generateFileTree, getFiles, deleteFile, createFile, createFolder };

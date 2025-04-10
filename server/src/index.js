@@ -7,6 +7,7 @@ import { createServer } from "http"; // Import HTTP module to create a server
 import { Server } from "socket.io"; // Import Socket.io for real-time communication
 import { initializeSocket } from "./webSocket/socket.js"; // Import function to initialize sockets
 import cors from "cors";
+import { setIOInstance } from "./webSocket/SocketStore.js";
  
 // Get the root directory
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -40,6 +41,8 @@ const io = new Server(server, {
  
 // Initialize Socket.io event listeners
 initializeSocket(io);
+setIOInstance(io);
+
 
 // Define the server port
 const port = process.env.PORT || 8000;
