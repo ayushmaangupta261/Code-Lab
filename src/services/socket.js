@@ -10,7 +10,7 @@ export const initSocket = async () => {
     reconnectionDelay: 1000,
     transports: ["websocket"],
   };
-
+ 
   try {
     const socket = io(BASE_URL, options);
 

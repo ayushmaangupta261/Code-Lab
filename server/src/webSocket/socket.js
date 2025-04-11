@@ -151,63 +151,81 @@ export function initializeSocket(io) {
 
     //----------------------------------------------------------------------------------------------------
 
-    // start the call
-    socket.on("join-call", (data) => {
-      const { roomId, emailId } = data;
+    // Handle user joining a call
+    socket.on("join-call", ({ roomId, emailId }) => {
+      if (!roomId || !emailId) return;
+
       console.log(`User -> ${emailId} joined room -> ${roomId}`);
+
       emailToSocketMapping.set(emailId, socket.id);
       socketToEmailMapping.set(socket.id, emailId);
+
       socket.join(roomId);
-      socket.emit("joined-call", { roomId });
-      socket.broadcast.to(roomId).emit("user-joined", { emailId });
+
+      // Notify other users in the room
+      socket.broadcast.to(roomId).emit("joined-call", { emailId });
     });
 
-    // Handle call event
-    socket.on("call-user", (data) => {
-      const { emailId, offer } = data;
-      console.log("Email in call user -> ", emailId);
-      // console.log("Offer in call user -> ",offer)
-
+    // Handle call initiation
+    socket.on("call-user", ({ emailId, offer }) => {
+      const toSocketId = emailToSocketMapping.get(emailId);
       const fromEmail = socketToEmailMapping.get(socket.id);
-      const socketId = emailToSocketMapping.get(emailId);
-      socket
-        .to(socketId)
-        .emit("incoming-call", { from: fromEmail, offer: offer });
-    });
 
-    // accept the call
-    socket.on("call-accepted", (data) => {
-      const { emailId, ans } = data;
-      const socketId = emailToSocketMapping.get(emailId);
-      socket.to(socketId).emit("call-accepted", { ans });
-    });
+      if (!toSocketId || !fromEmail) return;
 
-    // negotiation
-    socket.on("negotiation-offer", ({ emailId, offer }) => {
-      io.to(users[emailId]).emit("negotiation-offer", {
-        emailId: socketToEmail[socket.id],
+      console.log("Call initiated from:", fromEmail, "to:", emailId);
+
+      io.to(toSocketId).emit("incoming-call", {
+        from: emailId,
         offer,
       });
     });
 
-    // negotiation-answer
-    socket.on("negotiation-answer", ({ emailId, ans }) => {
-      io.to(users[emailId]).emit("negotiation-answer", {
-        ans,
+    // Handle call acceptance
+    socket.on("call-accepted", ({ emailId, ans }) => {
+      const toSocketId = emailToSocketMapping.get(emailId);
+      if (!toSocketId) return;
+
+      console.log("Call accepted by:", emailId);
+
+      io.to(toSocketId).emit("call-accepted", { ans });
+    });
+
+    // Handle negotiation offer (for ICE renegotiation or screen share, etc.)
+    socket.on("negotiation-offer", ({ emailId, offer }) => {
+      const toSocketId = emailToSocketMapping.get(emailId);
+      const fromEmail = socketToEmailMapping.get(socket.id);
+
+      if (!toSocketId || !fromEmail) return;
+
+      console.log(`Negotiation offer from ${fromEmail} to ${emailId}`);
+
+      io.to(toSocketId).emit("negotiation-offer", {
+        emailId: fromEmail,
+        offer,
       });
     });
 
-    //----------------------------------------------------------------------
-    // Disconnect the call
+    // Handle negotiation answer
+    socket.on("negotiation-answer", ({ emailId, ans }) => {
+      const toSocketId = emailToSocketMapping.get(emailId);
+      if (!toSocketId) return;
+
+      console.log(`Negotiation answer sent to ${emailId}`);
+
+      io.to(toSocketId).emit("negotiation-answer", { ans });
+    });
+
+    // Handle disconnect
     socket.on("disconnect", () => {
-      delete userSocketMap[socket.id];
-      // console.log(`User disconnected: ${socket.id}`);
-      for (const [email, id] of emailToSocketMapping.entries()) {
-        if (id === socket.id) {
-          emailToSocketMapping.delete(email);
-          break;
-        }
+      const emailId = socketToEmailMapping.get(socket.id);
+
+      if (emailId) {
+        emailToSocketMapping.delete(emailId);
       }
+
+      socketToEmailMapping.delete(socket.id);
+      console.log("A user disconnected:", socket.id);
     });
   });
 }

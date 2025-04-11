@@ -15,6 +15,10 @@ import FileTree from "../components/Terminal/FileTree.jsx";
 import fileImg from "../assets/Editor/fileImg.png";
 import LiveMeet from "../components/Terminal/LiveMeet.jsx";
 
+
+
+
+
 const EditorPage = () => {
   const socketRef = useRef(null);
   const location = useLocation();
@@ -22,6 +26,7 @@ const EditorPage = () => {
   const ReactNavigate = useNavigate();
   const { roomId } = useParams();
   const [clients, setClients] = useState([]);
+  
 
   /** ───────────────────────────────────────────────
    *  Initialize Socket Connection
@@ -137,12 +142,13 @@ const EditorPage = () => {
   console.log(`Selected file ${selectedFile}`);
 
   return (
-    <div className="mainwrap text-gray-100 flex h-[39rem] w-full gap-x-3 mt-[4rem] overflow-hidden ">
-      <div className="aside flex flex-col justify-between  bg-gray-700 py-5 px-5 rounded-2xl  w-[19%]">
+    <div className="mainwrap text-gray-100 flex  w-full gap-x-3 mt-[4rem] overflow-hidden h-[85vh] ">
+      
+      <div className="aside flex flex-col justify-between items-center  bg-gray-700 py-5 px-5 rounded-2xl  w-[19vw]">
         {/* Styled Selected File Display */}
-        <div className="flex flex-col gap-y-3 mx-auto">
+        <div className="flex flex-col gap-y-3 mx-auto items-center w-full">
           {/* menu toggle */}
-          <div className="w-[16rem] py-2 px-2 flex justify-between bg-gray-800 rounded-md overflow-x-auto scrollbar-none">
+          <div className="w-[16rem] py-1 px-1 flex justify-between bg-gray-800 rounded-md overflow-x-auto scrollbar-none">
             {/* Clients */}
             <button
               className={`w-[4rem] text-center px-2 py-1 rounded-md hover:scale-105 transition-all duration-300
@@ -184,7 +190,8 @@ const EditorPage = () => {
           </div>
           {/* show menu */}
           <div className="w-[16rem] overflow-y-auto">
-            <div>
+            
+          <div className="flex gap-x-2 flex-wrap mx-auto bg-gray-800 px-2 rounded-md">
               {/* files */}
               {showMenu === "files" && (
                 <FileTree onSelect={(path) => setSelectedFile(path)} />
@@ -205,7 +212,7 @@ const EditorPage = () => {
         </div>
 
         {/* copy and leave */}
-        <div className=" flex flex-col w-[15rem]">
+        <div className=" flex flex-col w-[15rem] items-center">
           <button
             className="btn copyBtn px-2 py-1 bg-gray-200 text-black  ml-auto rounded-lg mt-2 mb-2 cursor-pointer hover:scale-105 duration-200 w-full"
             onClick={copyRoomId}
@@ -238,8 +245,7 @@ const EditorPage = () => {
         </div>
 
         {/* Code Editor */}
-        <div className=" flex flex-col rounded-lg  ">
-          <div className="border border-amber-200 w-[1202px] mt-1">
+        <div className=" flex flex-col rounded-lg h-[50vh] mt-1 mb-1 border-amber-300 w-[79vw]">
             <Editor
               socketRef={socketRef}
               roomId={roomId}
@@ -248,7 +254,6 @@ const EditorPage = () => {
               }}
               selectedFile={selectedFile}
             />
-          </div>
         </div>
 
         {/* Terminal */}
