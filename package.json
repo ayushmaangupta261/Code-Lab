@@ -26,6 +26,7 @@
     "codemirror": "^5.65.18",
     "concurrently": "^9.1.2",
     "dotenv": "^16.4.7",
+    "html2canvas": "^1.4.1",
     "lucide-react": "^0.487.0",
     "nodemon": "^3.1.9",
     "react": "^19.0.0",

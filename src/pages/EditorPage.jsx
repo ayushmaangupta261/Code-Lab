@@ -13,11 +13,12 @@ import toast from "react-hot-toast";
 import TerminalComponent from "../components/Terminal/Terminal.jsx";
 import FileTree from "../components/Terminal/FileTree.jsx";
 import fileImg from "../assets/Editor/fileImg.png";
+import folders from "../assets/Editor/folders.png";
+import handshake from "../assets/Editor/handshake.png";
+import videoCall from "../assets/Editor/video-call.png";
+import whiteBoard from "../assets/Editor/whiteboard.png";
 import LiveMeet from "../components/Terminal/LiveMeet.jsx";
-
-
-
-
+import Whiteboard from "../components/Terminal/WhiteBoard.jsx";
 
 const EditorPage = () => {
   const socketRef = useRef(null);
@@ -26,7 +27,6 @@ const EditorPage = () => {
   const ReactNavigate = useNavigate();
   const { roomId } = useParams();
   const [clients, setClients] = useState([]);
-  
 
   /** ───────────────────────────────────────────────
    *  Initialize Socket Connection
@@ -143,15 +143,14 @@ const EditorPage = () => {
 
   return (
     <div className="mainwrap text-gray-100 flex  w-full gap-x-3 mt-[4rem] overflow-hidden h-[85vh] ">
-      
       <div className="aside flex flex-col justify-between items-center  bg-gray-700 py-5 px-5 rounded-2xl  w-[19vw]">
         {/* Styled Selected File Display */}
         <div className="flex flex-col gap-y-3 mx-auto items-center w-full">
           {/* menu toggle */}
-          <div className="w-[16rem] py-1 px-1 flex justify-between bg-gray-800 rounded-md overflow-x-auto scrollbar-none">
+          <div className="w-[16rem] justify-between py-1 px-1 flex  bg-gray-800 rounded-md overflow-x-auto scrollbar-none">
             {/* Clients */}
             <button
-              className={`w-[4rem] text-center px-2 py-1 rounded-md hover:scale-105 transition-all duration-300
+              className={`w-[3rem] flex justify-center items-center text-center px-2 py-1 rounded-md hover:scale-105 transition-all duration-300
           ${
             showMenu === "clients"
               ? "bg-green-700 text-white"
@@ -159,12 +158,12 @@ const EditorPage = () => {
           }`}
               onClick={() => handleMenuToggle("clients")}
             >
-              Clients
+              <img src={handshake} alt="" className="w-[2rem]" />
             </button>
 
             {/* Files */}
             <button
-              className={`w-[4rem] text-center px-2 py-1 rounded-md hover:scale-105 transition-all duration-300
+              className={`w-[3rem] text-center px-2 py-1 rounded-md hover:scale-105 transition-all duration-300
           ${
             showMenu === "files"
               ? "bg-green-700 text-white"
@@ -172,12 +171,12 @@ const EditorPage = () => {
           }`}
               onClick={() => handleMenuToggle("files")}
             >
-              Files
+              <img src={folders} alt="" className="w-[2rem]" />
             </button>
 
             {/* Live */}
             <button
-              className={`w-[4rem] text-center px-2 py-1 rounded-md hover:scale-105 transition-all duration-300
+              className={`w-[3rem] text-center px-2 py-1 rounded-md hover:scale-105 transition-all duration-300
           ${
             showMenu === "live-meet"
               ? "bg-green-700 text-white "
@@ -185,13 +184,25 @@ const EditorPage = () => {
           }`}
               onClick={() => handleMenuToggle("live-meet")}
             >
-              Live
+              <img src={videoCall} alt="" className="w-[2rem]" />
+            </button>
+
+            {/* whiteboard */}
+            <button
+              className={`w-[3rem] text-center px-2 py-1 rounded-md hover:scale-105 transition-all duration-300
+          ${
+            showMenu === "whiteboard"
+              ? "bg-green-700 text-white"
+              : "bg-green-500 text-black"
+          }`}
+              onClick={() => handleMenuToggle("whiteboard")}
+            >
+              <img src={whiteBoard} alt="" className="w-[2rem]" />
             </button>
           </div>
           {/* show menu */}
           <div className="w-[16rem] overflow-y-auto">
-            
-          <div className="flex gap-x-2 flex-wrap mx-auto bg-gray-800 px-2 rounded-md">
+            <div className="flex gap-x-2 flex-wrap mx-auto bg-gray-800 px-2 rounded-md">
               {/* files */}
               {showMenu === "files" && (
                 <FileTree onSelect={(path) => setSelectedFile(path)} />
@@ -228,38 +239,85 @@ const EditorPage = () => {
         </div>
       </div>
 
-      <div className="editorwrap w-[80%]  flex flex-col justify-between">
+      {/* <div className="editorwrap w-[80%]  flex flex-col justify-between">
         {/* working directory */}
-        <div className="bg-gray-800 w-[1202px] px-4 py-2 rounded-md text-gray-200 font-semibold flex items-center gap-2 shadow-md">
-          <span className="text-yellow-400">
-            {selectedFile && <img src={fileImg} alt="" className="w-[1rem]" />}
-          </span>
-          <p className="truncate w-full">
-            {selectedFile.replaceAll("/", " > ") || (
-              <p>
-                No file selected,{" "}
-                <span className="text-amber-300">Please select a file !</span>
-              </p>
-            )}
-          </p>
-        </div>
+      {/* <div className="bg-gray-800 w-[1202px] px-4 py-2 rounded-md text-gray-200 font-semibold flex items-center gap-2 shadow-md">
+        <span className="text-yellow-400">
+          {selectedFile && <img src={fileImg} alt="" className="w-[1rem]" />}
+        </span>
+        <p className="truncate w-full">
+          {selectedFile.replaceAll("/", " > ") || (
+            <p>
+              No file selected,{" "}
+              <span className="text-amber-300">Please select a file !</span>
+            </p>
+          )}
+        </p>
+      </div> */}
 
-        {/* Code Editor */}
-        <div className=" flex flex-col rounded-lg h-[50vh] mt-1 mb-1 border-amber-300 w-[79vw]">
-            <Editor
-              socketRef={socketRef}
-              roomId={roomId}
-              onCodeChange={(code) => {
-                codeRef.current = code;
-              }}
-              selectedFile={selectedFile}
-            />
-        </div>
+      {/* Code Editor */}
+      {/* <div className=" flex flex-col rounded-lg h-[50vh] mt-1 mb-1 border-amber-300 w-[79vw]">
+          <Editor
+            socketRef={socketRef}
+            roomId={roomId}
+            onCodeChange={(code) => {
+              codeRef.current = code;
+            }}
+            selectedFile={selectedFile}
+          />
+        </div> */}
 
-        {/* Terminal */}
-        <div className="">
+      {/* Terminal */}
+      {/* <div className="">
           <TerminalComponent />
-        </div>
+        </div> */}
+
+      {/* </div> */}
+
+      <div className="editorwrap w-[80%]  flex flex-col justify-between">
+        {showMenu !== "whiteboard" ? (
+          <div>
+            {/* working directory */}
+            <div className="bg-gray-800 w-[1202px] px-4 py-2 rounded-md text-gray-200 font-semibold flex items-center gap-2 shadow-md">
+              <span className="text-yellow-400">
+                {selectedFile && (
+                  <img src={fileImg} alt="" className="w-[1rem]" />
+                )}
+              </span>
+              <p className="truncate w-full">
+                {selectedFile.replaceAll("/", " > ") || (
+                  <p>
+                    No file selected,{" "}
+                    <span className="text-amber-300">
+                      Please select a file !
+                    </span>
+                  </p>
+                )}
+              </p>
+            </div>
+
+            {/* Code Editor */}
+            <div className=" flex flex-col rounded-lg h-[50vh] mt-1 mb-1 border-amber-300 w-[79vw]">
+              <Editor
+                socketRef={socketRef}
+                roomId={roomId}
+                onCodeChange={(code) => {
+                  codeRef.current = code;
+                }}
+                selectedFile={selectedFile}
+              />
+            </div>
+
+            {/* Terminal */}
+            <div className="">
+              <TerminalComponent />
+            </div>
+          </div>
+        ) : (
+          <div className="flex justify-center items-center mt-2 ">
+            <Whiteboard />
+          </div>
+        )}
       </div>
     </div>
   );

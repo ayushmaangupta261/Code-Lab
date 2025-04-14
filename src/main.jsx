@@ -24,6 +24,7 @@ import Notification from "./components/Dashboard/DashboardComponent/Notification
 import SubmitSolution from "./components/Editor/SubmitSolution.jsx";
 import CreateQuestion from "./components/Dashboard/DashboardComponent/CreateQuestion.jsx";
 import About from "./pages/AboutUs.jsx";
+import Whiteboard from "./components/Terminal/WhiteBoard.jsx";
 
 const router = createBrowserRouter([
   {
@@ -104,6 +105,10 @@ const router = createBrowserRouter([
           },
         ],
       },
+      // {
+      //   path: "white-board",
+      //   element: <Whiteboard />,
+      // },
     ],
   },
 ]);
