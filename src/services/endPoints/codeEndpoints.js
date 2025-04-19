@@ -8,4 +8,6 @@ export const codeEndpoints = {
   // CreateQuestion_API: BASE_URL + "/assignment/auth-status",
   SolveQuestions_API: BASE_URL + "/users/get-solved-questions",
   getAssignments_API: BASE_URL + "/assignment/get-all-assignments",
+  submitAssignments_API: BASE_URL + "/assignment/submit-assignments",
+  completedAssignments_API: BASE_URL + "/assignment/completed-assignments",
 };

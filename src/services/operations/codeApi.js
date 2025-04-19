@@ -8,6 +8,8 @@ const {
   CreateQuestion_API,
   SolveQuestions_API,
   getAssignments_API,
+  submitAssignments_API,
+  completedAssignments_API,
 } = codeEndpoints;
 
 export const compileCode = (data) => async (dispatch) => {
@@ -103,7 +105,7 @@ export const getAllAssignment = (token, instructor) => async (dispatch) => {
 
     const response = await apiConnector(
       "GET",
-      getAssignments_API,  
+      getAssignments_API,
       {},
       {
         Authorization: `Bearer ${token}`,
@@ -119,9 +121,9 @@ export const getAllAssignment = (token, instructor) => async (dispatch) => {
     // Dismiss loading toast and show success
     // Wait for 5 seconds before dismissing and showing success
     setTimeout(() => {
-    toast.dismiss(toastId);
-    toast.success("Assignments fetched successfully");
-    dispatch(setAuthLoading(false));
+      toast.dismiss(toastId);
+      toast.success("Assignments fetched successfully");
+      dispatch(setAuthLoading(false));
     }, 5000);
 
     return response;
@@ -134,5 +136,81 @@ export const getAllAssignment = (token, instructor) => async (dispatch) => {
     toast.error("Failed to find assignments");
 
     dispatch(setAuthLoading(false));
+  }
+};
+
+// submit assignments
+export const submitAssignment = (data, token) => async (dispatch) => {
+  // Store toast ID
+  const toastId = toast.loading("Submitting");
+
+  try {
+    console.log("Going to submit the assignments -> ", data);
+
+    if (!token) {
+      throw new Error("Please login to access your assignments");
+    }
+
+    const response = await apiConnector(
+      "POST",
+      submitAssignments_API,
+      { data },
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    if (!response) {
+      throw new Error("Failed to submit assignments");
+    }
+
+    console.log("Full Response from API ->", response);
+
+    // Dismiss loading toast and show success
+    // Wait for 5 seconds before dismissing and showing success
+
+    toast.dismiss(toastId);
+    toast.success("Assignments submitted successfully");
+
+    return response;
+  } catch (error) {
+    console.error("Error -> ", error);
+
+    // Dismiss loading toast and show error
+    toast.dismiss(toastId);
+    toast.error(error?.response?.data?.message);
+  }
+};
+
+// get completed assignments
+export const getCompletedAssignments = (token) => async (dispatch) => {
+  const toastId = toast.loading("Fetching Solved Questions");
+  try {
+    console.log("Token in get completed assihnmenst -> ", token);
+
+    const response = await apiConnector(
+      "GET",
+      completedAssignments_API,
+      {},
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    console.log("Response in api -> ", response.data.questionsSolved.length);
+
+    if (!response.data.success) {
+      toast.dismiss(toastId);
+      toast.error(response.data.message);
+      throw new Error(response.data.message);
+    }
+
+    toast.success("Fetched Solved Questions Successfully");
+    toast.dismiss(toastId);
+    return response.data;
+  } catch (error) {
+    toast.dismiss(toastId);
+    console.log(error);
+    return;
   }
 };

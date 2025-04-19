@@ -12,6 +12,7 @@ const {
   LogInUser_API,
   AuthStatus_API,
   RegisterInstitute_API,
+  LogOutUser_API,
 } = authEnpoint;
 
 // register user
@@ -93,7 +94,7 @@ export const login = (data, navigate) => async (dispatch) => {
 };
 
 // log out user
-export const logout = (navigate) => (dispatch) => {
+export const logout = (navigate, token) => async (dispatch) => {
   try {
     // Clear authentication state
     // dispatch(setToken(null));
@@ -102,16 +103,32 @@ export const logout = (navigate) => (dispatch) => {
     // localStorage.removeItem("token");
     localStorage.removeItem("user");
 
-    // Provide feedback
-    toast.success("Logged out successfully");
+    console.log("Token -> ", token);
 
-    // Navigate to home page
-    navigate("/");
+    const response = await apiConnector(
+      "POST",
+      LogOutUser_API,
+      {},
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
+
+    console.log("Logout Response in api -> ", response);
+
+    if (response?.data?.success) {
+      // Provide feedback
+      toast.success("Logged out successfully");
+
+      // Navigate to home page
+      navigate("/");
+    } 
   } catch (error) {
     console.error("Error during logout:", error);
+    toast.error("Unable to logout");
   }
 };
-
+ 
 // auth status
 export const authStatus = async (token) => {
   try {

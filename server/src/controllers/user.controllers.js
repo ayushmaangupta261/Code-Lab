@@ -79,7 +79,6 @@ const generateAccessAndRefereshTokens = async (userId, role) => {
   }
 };
 
-
 // Function to register the user
 const registerUser = async (req, res, next) => {
   // console.log("Request body -> ", req.body);
@@ -138,96 +137,10 @@ const registerUser = async (req, res, next) => {
 };
 
 // Function to login the user
-// const loginUser = async (req, res) => {
-//   // req body -> data
-//   // userName or email
-//   //find the user
-//   //password check
-//   //access and referesh token
-//   //send cookie
-
-//   const { email, password, role } = req.body;
-//   console.log(email);
-
-//   if (!password && !email && !role) {
-//     return res.status(401).json({
-//       message: "All credentials are required",
-//       success: false,
-//     });
-//   }
-
-//   if (role === "User") {
-//     const user = await User.findOne({
-//       email,
-//     });
-//   }
-
-//   if (!user) {
-//     return res.status(401).json({
-//       message: "Invalid email, user doesn't exists",
-//       success: false,
-//     });
-//   }
-
-//   console.log("User -> ", user);
-
-//   const isPasswordValid = await user.isPasswordCorrect(password);
-
-//   if (!isPasswordValid) {
-//     return res.status(401).json({
-//       message: "Invalid password, please check your password",
-//       success: false,
-//     });
-//   }
-
-//   const { accessToken, refreshToken } = await generateAccessAndRefereshTokens(
-//     user._id
-//   );
-
-//   console.log("Tokens -> ", accessToken, " ", refreshToken);
-
-//   const loggedInUser = await User.findById(user._id).select(
-//     "-password -refreshToken"
-//   );
-
-//   const userObject = loggedInUser.toObject();
-
-//   // ✅ Attach accessToken to the response
-//   userObject.accessToken = accessToken;
-
-//   console.log("Final Response -> ", userObject);
-
-//   const options = {
-//     httpOnly: true,
-//     secure: false,
-//     sameSite: "None",
-//   };
-
-//   // return res
-//   //   .status(200)
-//   //   .cookie("accessToken", accessToken, options)
-//   //   .cookie("refreshToken", refreshToken, options)
-//   //   .json({
-//   //     user: loggedInUser,
-//   //     success: true,
-//   //   });
-
-//   setTimeout(() => {
-//     res
-//       .status(200)
-//       .cookie("accessToken", accessToken, options)
-//       .cookie("refreshToken", refreshToken, options)
-//       .json({
-//         user: userObject,
-//         success: true,
-//       });
-//   }, 5000); // 5 seconds delay
-// };
-
 const loginUser = async (req, res) => {
   // Extract credentials from request body
   const { email, password, role } = req.body;
-  console.log(email, " ", password, " ", role);
+  // console.log(email, " ", password, " ", role);
 
   // Validate input fields
   if (!email || !password || !role) {
@@ -254,7 +167,7 @@ const loginUser = async (req, res) => {
         });
       }
 
-      console.log("User -> ", user);
+      // console.log("User -> ", user);
 
       const isPasswordValid = await user.isPasswordCorrect(password);
 
@@ -268,7 +181,7 @@ const loginUser = async (req, res) => {
       const { accessToken, refreshToken } =
         await generateAccessAndRefereshTokens(user._id, role);
 
-      console.log("Tokens -> ", accessToken, " ", refreshToken);
+      // console.log("Tokens -> ", accessToken, " ", refreshToken);
 
       const loggedInUser = await User.findById(user._id).select(
         "-password -refreshToken"
@@ -277,7 +190,7 @@ const loginUser = async (req, res) => {
       const userObject = loggedInUser.toObject();
       userObject.accessToken = accessToken;
 
-      console.log("Final Response -> ", userObject);
+      // console.log("Final Response -> ", userObject);
 
       setTimeout(() => {
         res
@@ -352,6 +265,56 @@ const loginUser = async (req, res) => {
   }
 };
 
+//function to logout the user
+const logOutUser = async (req, res) => {
+  try {
+    const user = req?.user;
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "User already Logged Out",
+      });
+    }
+
+    console.log("user to logout -> ", user);
+
+    const loggedInUser = await User.findById({ _id: user._id });
+
+    if (!loggedInUser) {
+      return res.status(400).json({
+        success: false,
+        message: "User already Logged Out",
+      });
+    }
+
+    if (
+      loggedInUser.accessToken === null ||
+      loggedInUser.accessToken !== user.accessToken
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "User already Logged Out",
+      });
+    }
+
+    loggedInUser.accessToken = null;
+    loggedInUser.refreshToken = null;
+    await loggedInUser.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "User Logged Out successfully",
+    });
+  } catch (error) {
+    console.log("User logout error -> ", error);
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 // function to check auth status
 const authStatus = async (req, res) => {
   try {
@@ -387,4 +350,4 @@ const authStatus = async (req, res) => {
   }
 };
 
-export { registerUser, loginUser, authStatus };
+export { registerUser, loginUser, authStatus, logOutUser };

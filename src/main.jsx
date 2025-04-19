@@ -16,7 +16,7 @@ import Projects from "./components/Dashboard/DashboardComponent/Projects.jsx";
 import { Overview } from "./components/Dashboard/DashboardComponent/Overview.jsx";
 import { Assignment } from "./components/Dashboard/DashboardComponent/Assignment.jsx";
 import DailySchedule from "./components/Dashboard/DashboardComponent/DailySchedule.jsx";
-import JobApplies from "./components/Dashboard/DashboardComponent/JobApplies.jsx";
+import QuestionsSolved from "./components/Dashboard/DashboardComponent/QuestionsSolved.jsx";
 import Jobs from "./components/Dashboard/DashboardComponent/Jobs.jsx";
 import { JobUpdates } from "./components/Dashboard/DashboardComponent/JobUpdates.jsx";
 import Settings from "./components/Dashboard/DashboardComponent/Settings.jsx";
@@ -25,6 +25,7 @@ import SubmitSolution from "./components/Editor/SubmitSolution.jsx";
 import CreateQuestion from "./components/Dashboard/DashboardComponent/CreateQuestion.jsx";
 import About from "./pages/AboutUs.jsx";
 import Whiteboard from "./components/Terminal/WhiteBoard.jsx";
+import ViewSolvedQuestions from "./components/Dashboard/DashboardComponent/ViewSolvedQuestions.jsx";
 
 const router = createBrowserRouter([
   {
@@ -64,7 +65,7 @@ const router = createBrowserRouter([
         ),
         children: [
           {
-            path: "/dashboard",
+            path: "/dashboard/overview",
             element: <Overview />,
           },
           {
@@ -76,8 +77,8 @@ const router = createBrowserRouter([
             element: <DailySchedule />,
           },
           {
-            path: "/dashboard/job-applies",
-            element: <JobApplies />,
+            path: "/dashboard/questions-solved",
+            element: <QuestionsSolved />,
           },
           {
             path: "/dashboard/create-question",
@@ -102,6 +103,10 @@ const router = createBrowserRouter([
           {
             path: "/dashboard/settings",
             element: <Settings />,
+          },
+          {
+            path: "/dashboard/questions-Solved/view-solved-questions",
+            element: <ViewSolvedQuestions />,
           },
         ],
       },

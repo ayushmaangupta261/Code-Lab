@@ -4,8 +4,11 @@ import { cpp } from "@codemirror/lang-cpp";
 import { java } from "@codemirror/lang-java";
 import { python } from "@codemirror/lang-python";
 import { dracula } from "@uiw/codemirror-theme-dracula";
-import { compileCode } from "../../services/operations/codeApi";
-import { useDispatch } from "react-redux";
+import {
+  compileCode,
+  submitAssignment,
+} from "../../services/operations/codeApi";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 
 const SubmitSolution = () => {
@@ -13,6 +16,9 @@ const SubmitSolution = () => {
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
   const [language, setLanguage] = useState("java");
+  const user = useSelector((state) => state.auth);
+
+  console.log("User in assignment -> ", user.user);
 
   const dispatch = useDispatch();
   const location = useLocation();
@@ -50,6 +56,24 @@ const SubmitSolution = () => {
       console.error("❌ Error compiling code:", error);
       setOutput("Error compiling code.");
     }
+  };
+
+  // submit solution
+  const handleSubmit = async () => {
+    try {
+      const response = await dispatch(
+        submitAssignment(
+          {
+            code,
+            language,
+            assignmentId: assignment?._id,
+            input
+          },
+          user?.user?.accessToken
+        )
+      );
+      console.log("Submitted -> ", response);
+    } catch (error) {}
   };
 
   // handle change if the coding language
@@ -145,8 +169,12 @@ const SubmitSolution = () => {
             >
               Run
             </button>
-
-            
+            <button
+              className="bg-green-500 text-black px-4 py-2 rounded"
+              onClick={handleSubmit}
+            >
+              submit
+            </button>
           </div>
 
           {/* Code Editor */}

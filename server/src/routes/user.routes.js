@@ -3,9 +3,13 @@ import {
   authStatus,
   registerUser,
   loginUser,
+  logOutUser,
 } from "../controllers/user.controllers.js";
 
-import { createQuestion, getSolvedQuestions } from "../controllers/instructor.controller.js";
+import {
+  createQuestion,
+  getSolvedQuestions,
+} from "../controllers/instructor.controller.js";
 
 import { upload } from "../middlewares/multer.middleware.js";
 
@@ -32,14 +36,13 @@ router.route("/register").post(
 
 // login the user
 router.route("/login").post(loginUser);
+router.route("/logOut").post(authMiddleware, logOutUser);
 
 // auth status
 router.route("/auth-status").get(authMiddleware, authStatus);
 
-
 // instructor route
 router.route("/post-question").post(authMiddleware, createQuestion); // add middleware
 router.route("/get-solved-questions").get(authMiddleware, getSolvedQuestions);
-
 
 export default router;

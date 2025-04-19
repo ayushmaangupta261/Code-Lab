@@ -1,24 +1,30 @@
 import jwt, { decode } from "jsonwebtoken";
 
 const authMiddleware = (req, res, next) => {
-  try { 
-    // console.log("req -> ",req.body); 
+  try {
+    // console.log("req -> ",req.body);
     // console.log("cookie -> ",req.cookies)
     const authHeader = req.headers["authorization"];
-    console.log("Token -> ",authHeader);
+    // console.log("Token -> ",authHeader);
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({ message: "Unauthorized: No token provided" });
+      return res
+        .status(401)
+        .json({ message: "Unauthorized: No token provided" });
     }
 
     const accessToken = authHeader.split(" ")[1];
-     
-    // console.log("Acess token -> ", accessToken);
+
+    console.log("Acess token -> ", accessToken);
 
     if (!accessToken) {
       return res
         .status(401)
-        .json({ message: "Not authenticated", isAuthenticated: false });
+        .json({
+          message: "Not authenticated",
+          isAuthenticated: false,
+          success: false,
+        });
     }
 
     // Verify the token
@@ -32,10 +38,12 @@ const authMiddleware = (req, res, next) => {
         .json({ message: "Invalid token", isAuthenticated: false });
     }
 
-    // Attach user details to `req.user` for further processing
-    req.user = decoded;
+    req.user = {
+      ...decoded,
+      accessToken,
+    };
 
-    console.log(req.user);
+    // console.log(req.user);
 
     // Proceed to the next middleware or route handler
     next();
@@ -45,6 +53,5 @@ const authMiddleware = (req, res, next) => {
       .json({ message: "Authentication failed", isAuthenticated: false });
   }
 };
-
 
 export default authMiddleware;

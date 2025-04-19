@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import  bcrypt  from "bcrypt";
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 const instituteSchema = Schema({
@@ -31,6 +31,10 @@ const instituteSchema = Schema({
   },
   images: {
     type: [String],
+  },
+  accountType: {
+    type: String,
+    enum: "Institute",
   },
 });
 

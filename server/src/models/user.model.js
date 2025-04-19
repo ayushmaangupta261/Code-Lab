@@ -46,20 +46,23 @@ const userSchema = Schema(
       type: Schema.Types.ObjectId,
       ref: "Institute",
     },
-    instructor:{
+    instructor: {
       type: Schema.Types.ObjectId,
-      ref: "Instructor",
+      ref: "User",
     },
+
     questionsSolved: {
       type: [Schema.Types.ObjectId],
       ref: "Question",
     },
 
     // for instructor
-    questions: {
-      type: [Schema.Types.ObjectId],
-      ref: "Question",
-    },
+    questions: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Question",
+      },
+    ],
   },
   {
     timestamps: true,

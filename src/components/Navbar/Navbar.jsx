@@ -12,10 +12,10 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
-  // console.log("User in navbar -> ", user);
+  console.log("User in navbar -> ", user);
 
   const handleLogOut = () => {
-    dispatch(logout(navigate));
+    dispatch(logout(navigate, user?.accessToken));
   };
 
   return (

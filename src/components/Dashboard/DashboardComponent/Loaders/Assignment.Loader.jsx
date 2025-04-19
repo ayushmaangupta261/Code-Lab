@@ -4,8 +4,8 @@ import styled from 'styled-components';
 const AssignmentLoader = () => {
   return (
     <StyledWrapper className=''>
-      <div className="loader">
-        <div className='h-full'>
+      <div className="loader ">
+        <div className='h-full '>
           <ul>
             <li>
               <svg fill="currentColor" viewBox="0 0 90 120">

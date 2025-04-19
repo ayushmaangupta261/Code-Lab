@@ -33,6 +33,7 @@ const registerInstitute = async (req, res, next) => {
       name,
       email,
       password,
+      isInstitute: true,  
     });
 
     if (!institute) {

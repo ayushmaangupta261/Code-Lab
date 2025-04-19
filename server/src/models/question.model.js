@@ -22,23 +22,29 @@ const questionSchema = Schema(
         ref: "SampleCode",
       },
     ],
-    example:[
+    example: [
       {
-        type:mongoose.Types.ObjectId,
+        type: mongoose.Types.ObjectId,
         ref: "Example",
-      }
+      },
     ],
-    createdBy:{
+    createdBy: {
       type: mongoose.Types.ObjectId,
-      ref: "User"
+      ref: "User",
     },
-    collegeId:{
+    collegeId: {
       type: mongoose.Types.ObjectId,
-      ref: "Institute"
+      ref: "Institute",
     },
-    solvedBy:{
-      type: mongoose.Types.ObjectId,
-      ref: "User"
+    solvedBy: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    solved: {
+      type: Boolean,
+      default: false,
     },
     // subjectName:{
     //   type: String,

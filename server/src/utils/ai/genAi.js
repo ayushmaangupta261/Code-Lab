@@ -19,11 +19,11 @@ const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
 //  Handles AI-generated content request
-const myAi = async (message) => {
+const genAi = async (message) => {
   try {
     // const { message } = req.body; // ✅ Extract input from request body
 
-    console.log("AI Request Message -> ", message);
+    // console.log("AI Request Message -> ", message);
 
     if (!message) {
       return res.status(400).json({
@@ -37,7 +37,7 @@ const myAi = async (message) => {
     // console.log("Result -> ", result);
     const responseText = result.response.text();
 
-    console.log("AI Response -> ", responseText);
+    // console.log("AI Response -> ", responseText);
 
    return responseText
 
@@ -48,4 +48,4 @@ const myAi = async (message) => {
   }
 };
 
-export { myAi }; // ✅ Export function
+export { genAi }; // ✅ Export function

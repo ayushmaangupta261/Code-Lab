@@ -451,7 +451,7 @@ export function initializeSocket(io) {
       io.to(toSocketId).emit("negotiation-answer", { ans });
     });
 
-    // Whiteboard
+    // Whiteboard 
     socket.on("join-whiteboard", ({ roomId, userId }) => {
       // Ensure the room exists or initialize it
       console.log("joining white-board -> ", roomId);

@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllAssignment } from "../../../services/operations/codeApi.js";
 import AssignmentLoader from "./Loaders/Assignment.Loader.jsx";
 import { useNavigate } from "react-router";
+import { getCompletedAssignments } from "../../../services/operations/codeApi.js";
+import checkMark from "../../../assets/Dashboard/checkmark.png";
 
 export const Assignment = () => {
   const dispatch = useDispatch();
@@ -32,10 +34,25 @@ export const Assignment = () => {
 
   // console.log("Assignments -> ", assignments);
 
+  const solvedQuestionClickHandler = async () => {
+    try {
+      console.log("Fetch completed assignments -> ", user);
+      const response = await dispatch(
+        getCompletedAssignments(user?.user?.accessToken)
+      );
+      console.log("Response in ui -> ", response);
+
+      // console("solved questions -> ",solvedQuestions)
+    } catch (error) {
+      console.log("Error in fetching questions");
+      // toast.error(error.message);
+    }
+  };
+
   return (
     <div className="w-full h-full ">
       {authLoading ? (
-        <div className="flex flex-col gap-y-5  h-full justify-center items-center">
+        <div className="flex flex-col gap-y-5  h-full justify-center items-center ">
           <AssignmentLoader />
           <p className="text-lg">Please Wait...</p>
         </div>
@@ -49,31 +66,45 @@ export const Assignment = () => {
             <p className="text-xl">Assignments</p>
           </div>
           {/* Assignments */}
-          <div className=" mt-5 w-[90%] flex flex-col gap-y-3">
+          <div className="mt-5 w-[90%] flex flex-col gap-y-3">
             {assignments?.length > 0 &&
-              assignments.map((assignment, index) => (
-                <div
-                  key={assignment.id}
-                  className="flex items-center justify-between px-5 py-3 rounded-lg bg-slate-600 hover:bg-slate-700 transition-all duration-300 "
-                >
-                  <p className="flex gap-x-2">
-                    <span className="">Q {index + 1}.</span>
-                    {assignment.title}
-                  </p>
-                  {/* <p>{assignment.description}</p> */}
-                  <button
-                    className="bg-amber-300 text-black px-3 py-1 rounded-md hover:scale-95 transition-all duration-200"
-                    onClick={() =>
-                      navigate("/editor/submitSolution", {
-                        state: { assignment }, // ✅ Send assignment data
-                      })
-                    }
+              [...assignments]
+                .sort((a, b) => b.solved - a.solved) // ✅ Solved ones come first
+                .map((assignment, index) => (
+                  <div
+                    key={assignment.id}
+                    className={`flex items-center justify-between px-5 py-3 rounded-lg transition-all duration-300 ${
+                      assignment.solved
+                        ? "bg-slate-700 cursor-default"
+                        : "bg-slate-600 hover:bg-slate-700 cursor-pointer"
+                    }`}
                   >
-                    Solve
-                  </button>
-                </div>
-              ))}
+                    <p className="flex gap-x-2">
+                      <span>Q {index + 1}.</span>
+                      {assignment.title}
+                    </p>
+
+                    {assignment.solved ? (
+                      <div className="flex w-[5rem] justify-between items-center">
+                        <img src={checkMark} alt="" className="w-[1.5rem]" />
+                        <p className="text-green-400">Solved</p>
+                      </div>
+                    ) : (
+                      <button
+                        className="bg-amber-300 text-black px-3 py-1 rounded-md hover:scale-95 transition-all duration-200"
+                        onClick={() =>
+                          navigate("/editor/submitSolution", {
+                            state: { assignment },
+                          })
+                        }
+                      >
+                        Solve
+                      </button>
+                    )}
+                  </div>
+                ))}
           </div>
+
           {/* If no assignments are present */}
           <div>
             {assignments?.length === 0 && <p>No assignments available.</p>}
