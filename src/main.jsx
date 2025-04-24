@@ -13,7 +13,7 @@ import Auth from "./pages/Auth.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import ProtectedRoute from "./components/Auth/ProtectedRoute.jsx";
 import Projects from "./components/Dashboard/DashboardComponent/Projects.jsx";
-import { Overview } from "./components/Dashboard/DashboardComponent/Overview.jsx";
+import Overview from "./components/Dashboard/DashboardComponent/Overview.jsx";
 import { Assignment } from "./components/Dashboard/DashboardComponent/Assignment.jsx";
 import DailySchedule from "./components/Dashboard/DashboardComponent/DailySchedule.jsx";
 import QuestionsSolved from "./components/Dashboard/DashboardComponent/QuestionsSolved.jsx";
@@ -121,16 +121,23 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")).render(
   <Provider store={store}>
     <RouterProvider router={router} />
+
     <Toaster
       position="top-right"
       reverseOrder={false}
-      toastOptions={{
-        success: {
-          theme: {
-            primary: "green-400",
-          },
-        },
+      containerStyle={{
+        marginTop: "1rem",
+        marginRight: "1rem",
       }}
+      // toastOptions={{
+      //   // Global toast styles
+      //   className: "transform transition-all duration-500 ease-in-out",
+      //   style: {
+      //     animation:
+      //       "slideInRight 0.4s ease, slideOutRight 0.4s ease 2.6s forwards",
+      //   },
+
+      // }}
     />
   </Provider>
 );

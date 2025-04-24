@@ -21,10 +21,16 @@ const instituteSchema = Schema({
   studentsEnrolled: {
     type: [mongoose.Types.ObjectId],
     ref: "Student",
+    default: [],
   },
   instructorsPresent: {
     type: [mongoose.Types.ObjectId],
     ref: "Instructor",
+    default: [],
+  },
+  subjects: {
+    type: [String],
+    default: [],
   },
   details: {
     type: String,
@@ -34,7 +40,7 @@ const instituteSchema = Schema({
   },
   accountType: {
     type: String,
-    enum: "Institute",
+    default: "Institute",
   },
 });
 

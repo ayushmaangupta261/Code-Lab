@@ -2,7 +2,7 @@ import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-const studentSchema = Schema(
+const instructorSchema = Schema(
   {
     fullName: {
       type: String,
@@ -19,20 +19,12 @@ const studentSchema = Schema(
       type: String,
       required: [true, "Password is required"],
     },
-    // userName: {
-    //   type: String,
-    //   // required: true,
-    //   unique: true,
-    //   lowercase: true,
-    //   trim: true,
-    // },
     avatar: {
       type: String, // Cloudinary Url
     },
     accountType: {
       type: String,
-      enum: ["Institute", "Student", "Instructor"],
-      required: true,
+      default: "Instructor",
     },
     refreshToken: {
       type: String,
@@ -46,26 +38,25 @@ const studentSchema = Schema(
       type: Schema.Types.ObjectId,
       ref: "Institute",
     },
-    instructor: {
-      type: Schema.Types.ObjectId,
-      ref: "Instructor",
+    students: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Student",
+      },
+    ],
+    questions: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Question",
+      },
+    ],
+    subject: {
+      type: String,
+      default: "",
     },
     mobileNumber: {
       type: Number,
     },
-
-    questionsSolved: {
-      type: [Schema.Types.ObjectId],
-      ref: "Question",
-    },
-
-    // // for instructor
-    // questions: [
-    //   {
-    //     type: Schema.Types.ObjectId,
-    //     ref: "Question",
-    //   },
-    // ],
   },
   {
     timestamps: true,
@@ -73,7 +64,7 @@ const studentSchema = Schema(
 );
 
 // pre method to encrypt the password
-studentSchema.pre("save", async function (next) {
+instructorSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
   this.password = await bcrypt.hash(this.password, 10);
@@ -81,12 +72,12 @@ studentSchema.pre("save", async function (next) {
 });
 
 // Method to check password is correct or not
-studentSchema.methods.isPasswordCorrect = async function (password) {
+instructorSchema.methods.isPasswordCorrect = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 
 // Method to generate access token
-studentSchema.methods.generateAccessToken = function () {
+instructorSchema.methods.generateAccessToken = function () {
   return jwt.sign(
     {
       _id: this._id,
@@ -102,7 +93,7 @@ studentSchema.methods.generateAccessToken = function () {
 };
 
 // Method to generate refresh token
-studentSchema.methods.generateRefreshToken = function () {
+instructorSchema.methods.generateRefreshToken = function () {
   return jwt.sign(
     {
       _id: this._id,
@@ -114,4 +105,4 @@ studentSchema.methods.generateRefreshToken = function () {
   );
 };
 
-export const Student = mongoose.model("Student", studentSchema);
+export const Instructor = mongoose.model("Instructor", instructorSchema);

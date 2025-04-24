@@ -8,11 +8,11 @@ import {
 import toast from "react-hot-toast";
 
 const {
-  RegisterUser_API,
-  LogInUser_API,
+  Register_Student_API,
+  LogIn_Student_API,
   AuthStatus_API,
   RegisterInstitute_API,
-  LogOutUser_API,
+  LogOut_Student_API,
 } = authEnpoint;
 
 // register user
@@ -27,9 +27,9 @@ export const registerUser = (data) => async (dispatch) => {
       throw new Error("All fields are required");
     }
 
-    console.log("Register api ->", RegisterUser_API);
+    console.log("Register api ->", Register_Student_API);
 
-    const response = await apiConnector("POST", RegisterUser_API, {
+    const response = await apiConnector("POST", Register_Student_API, {
       fullName,
       userName,
       email,
@@ -62,13 +62,16 @@ export const login = (data, navigate) => async (dispatch) => {
       throw new Error("Email and password are required");
     }
 
-    const response = await apiConnector("POST", LogInUser_API, {
+    const response = await apiConnector("POST", LogIn_Student_API, {
       email,
       password,
       role,
     });
 
-    console.log("Response from login user in authApi -> ", response);
+    console.log(
+      "Response from login user in authApi -> ",
+      response?.data?.user
+    );
 
     if (!response.data.success) {
       throw new Error("Error in log in");
@@ -81,7 +84,7 @@ export const login = (data, navigate) => async (dispatch) => {
 
     toast.success("Logged In successfully");
 
-    navigate("/dashboard");
+    navigate("/dashboard/overview");
 
     dispatch(setAuthLoading(false));
 
@@ -94,41 +97,45 @@ export const login = (data, navigate) => async (dispatch) => {
 };
 
 // log out user
-export const logout = (navigate, token) => async (dispatch) => {
+export const logout = (navigate) => async (dispatch) => {
   try {
     // Clear authentication state
     // dispatch(setToken(null));
     dispatch(setUser(null));
 
-    // localStorage.removeItem("token");
+    // const userString = localStorage.getItem("user");
+    // const user = userString ? JSON.parse(userString) : null;
+    // const token = user?.accessToken;
+
+    // // localStorage.removeItem("token");
     localStorage.removeItem("user");
 
-    console.log("Token -> ", token);
+    // console.log("Token -> ", token);
 
-    const response = await apiConnector(
-      "POST",
-      LogOutUser_API,
-      {},
-      {
-        Authorization: `Bearer ${token}`,
-      }
-    );
+    // const response = await apiConnector(
+    //   "POST",
+    //   LogOut_Student_API,
+    //   {},
+    //   {
+    //     Authorization: `Bearer ${token}`,
+    //   }
+    // );
 
-    console.log("Logout Response in api -> ", response);
+    // console.log("Logout Response in api -> ", response);
 
-    if (response?.data?.success) {
-      // Provide feedback
-      toast.success("Logged out successfully");
+    // if (response?.data?.success) {
+    // Provide feedback
+    toast.success("Logged out successfully");
 
-      // Navigate to home page
-      navigate("/");
-    } 
+    // Navigate to home page
+    navigate("/");
+    // }
   } catch (error) {
     console.error("Error during logout:", error);
     toast.error("Unable to logout");
   }
 };
- 
+
 // auth status
 export const authStatus = async (token) => {
   try {
@@ -149,39 +156,5 @@ export const authStatus = async (token) => {
   } catch (error) {
     console.log("Error in auth status -> ", error);
     toast.response(`${error.response.data.message} , please login`);
-  }
-};
-
-// Institute
-export const registerInstitute = (data) => async (dispatch) => {
-  dispatch(setAuthLoading(true));
-  try {
-    console.log("Data in register Institute -> ", data);
-    const { fullName, email, password } = data;
-    // console.log("Full Name -> ", fullName);
-
-    if (!fullName || !email || !password) {
-      throw new Error("All fields are required");
-    }
-
-    console.log("Register api ->", RegisterInstitute_API);
-
-    const response = await apiConnector("POST", RegisterInstitute_API, {
-      name: fullName,
-      email,
-      password,
-    });
-
-    console.log("Response from register institute in authApi -> ", response);
-
-    dispatch(setAuthLoading(false));
-
-    toast.success("Registration Done Successfully");
-
-    return response;
-  } catch (error) {
-    console.log("Error: ", error);
-    dispatch(setAuthLoading(false));
-    toast.error(error.message);
   }
 };

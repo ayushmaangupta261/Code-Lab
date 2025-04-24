@@ -36,35 +36,35 @@ export const DashboardLinks = [
     type: ACCOUNT_TYPE.INSTRUCTOR,
     // icon:"VscAdd"
   },
-  {
-    id: 5,
-    name: "Notification",
-    path: "/dashboard/notification",
-    type: ACCOUNT_TYPE.STUDENT,
-    // icon:"VscAccount"
-  },
-  {
-    id: 6,
-    name: "Jobs",
-    path: "/dashboard/jobs",
-    type: ACCOUNT_TYPE.STUDENT,
-    // icon:"VscHistory"
-  },
+  // {
+  //   id: 5,
+  //   name: "Notification",
+  //   path: "/dashboard/notification",
+  //   type: ACCOUNT_TYPE.STUDENT,
+  //   // icon:"VscAccount"
+  // },
+  // {
+  //   id: 6,
+  //   name: "Jobs",
+  //   path: "/dashboard/jobs",
+  //   type: ACCOUNT_TYPE.STUDENT,
+  //   // icon:"VscHistory"
+  // },
 
-  {
-    id: 8,
-    name: "Job Updates",
-    path: "/dashboard/job-updates",
-    type: ACCOUNT_TYPE.STUDENT,
-    // icon:"VscHistory"
-  },
-  {
-    id: 9,
-    name: "Daily Schedule",
-    path: "/dashboard/daily-schedule",
-    type: ACCOUNT_TYPE.STUDENT,
-    // icon:"VscHistory"
-  },
+  // {
+  //   id: 8,
+  //   name: "Job Updates",
+  //   path: "/dashboard/job-updates",
+  //   type: ACCOUNT_TYPE.STUDENT,
+  //   // icon:"VscHistory"
+  // },
+  // {
+  //   id: 9,
+  //   name: "Daily Schedule",
+  //   path: "/dashboard/daily-schedule",
+  //   type: ACCOUNT_TYPE.STUDENT,
+  //   // icon:"VscHistory"
+  // },
   {
     id: 10,
     name: "Settings",

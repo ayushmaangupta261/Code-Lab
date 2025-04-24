@@ -19,7 +19,7 @@ const app = express();
 
 console.log(process.env.CORS_ORIGIN);
 
-app.use( 
+app.use(
   cors({
     origin: "http://localhost:3000",
     // origin: process.env.CORS_ORIGIN,
@@ -34,20 +34,22 @@ app.use(express.static("public"));
 app.use(cookieParser());
 
 // importing the routes
-import userRoutes from "./routes/user.routes.js";
+import studentRoute from "./routes/student.routes.js";
 import codeingRoutes from "./routes/code.routes.js";
 import instituteRoutes from "./routes/institute.routes.js";
 import aiRoutes from "./routes/ai.routes.js";
 import assignmentRoutes from "./routes/assignment.routes.js";
 import codeColaborationRoutes from "./routes/codeColaboration.route.js";
+import instrucrtorRoutes from "./routes/instructor.routes.js";
 
 // route declaration
-app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/student", studentRoute);
 app.use("/api/v1/code", codeingRoutes);
 app.use("/api/v1/institute", instituteRoutes);
 app.use("/api/v1/ai-routes", aiRoutes);
 app.use("/api/v1/code-collaboration", codeColaborationRoutes);
 
 app.use("/api/v1/assignment", assignmentRoutes);
+app.use("/api/v1/instructor", instrucrtorRoutes);
 
 export { app };

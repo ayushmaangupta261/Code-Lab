@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import google from "../../assets/Auth/google.png";
 import github from "../../assets/Auth/github.png";
 import { registerUser } from "../../services/operations/authApi";
-import { registerInstitute } from "../../services/operations/authApi";
-import { useSelector } from "react-redux";
+import { registerInstitute } from "../../services/operations/instituteAPI";
+import { registerInstructor } from "../../services/operations/instructorApi.js";
 import "./authLoader.css";
 
 const SignUp = ({ toggleLogInForm }) => {
@@ -15,13 +15,14 @@ const SignUp = ({ toggleLogInForm }) => {
     handleSubmit,
     formState: { errors },
     control,
+    reset,
   } = useForm();
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { authLoading } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
-  // Watching account type value
   const accountType = useWatch({
     control,
     name: "accountType",
@@ -33,13 +34,18 @@ const SignUp = ({ toggleLogInForm }) => {
     setShowConfirmPassword(!showConfirmPassword);
 
   const submitForm = (data) => {
-    // console.log(data);
-    const { confirmPassword, ...userData } = data;
-
-    if (accountType === "Institute") {
-      dispatch(registerInstitute(userData));
-    } else {
-      dispatch(registerUser(userData));
+    switch (accountType) {
+      case "Student":
+        dispatch(registerUser(data));
+        break;
+      case "Instructor":
+        dispatch(registerInstructor(data));
+        break;
+      case "Institute":
+        dispatch(registerInstitute(data));
+        break;
+      default:
+        console.warn("Unknown account type:", accountType);
     }
 
     reset();
@@ -48,13 +54,13 @@ const SignUp = ({ toggleLogInForm }) => {
   return (
     <div className="flex justify-center items-center h-[40rem] w-[25rem] py-3 px-3 ml-5 ">
       {authLoading ? (
-        <div class="card h-[5rem] flex justify-center items-center ">
-          <div class="loader">
-            <div class="words ">
-              <span class="word">Verifying</span>
-              <span class="word">Processing</span>
-              <span class="word">Signning Up</span>
-              <span class="word">Please Wait</span>
+        <div className="card h-[5rem] flex justify-center items-center ">
+          <div className="loader">
+            <div className="words ">
+              <span className="word">Verifying</span>
+              <span className="word">Processing</span>
+              <span className="word">Signning Up</span>
+              <span className="word">Please Wait</span>
             </div>
           </div>
         </div>
@@ -62,7 +68,7 @@ const SignUp = ({ toggleLogInForm }) => {
         <div className="flex flex-col">
           <div className="flex flex-col">
             <p className="">Hey There !!!</p>
-            <p className="text-4xl  font-semibold">Sign Up</p>
+            <p className="text-4xl font-semibold">Sign Up</p>
           </div>
 
           {/* Form */}
@@ -71,79 +77,44 @@ const SignUp = ({ toggleLogInForm }) => {
               onSubmit={handleSubmit(submitForm)}
               className="flex flex-col gap-y-3"
             >
-              {/* Student-Instructor Selection */}
+              {/* Account Type */}
               <div className="flex flex-col">
-                <div>
-                  <p>Account Type:</p>
-                </div>
+                <p>Account Type:</p>
                 <div className="flex justify-between px-1 py-1 rounded-xl md:rounded-full bg-richblack-800 w-[20rem]">
-                  <label
-                    className={`cursor-pointer px-3 py-2 rounded-xl border   md:rounded-full transition-all duration-200 hover:scale-105 
-                                ${
-                                  accountType === "Student"
-                                    ? "bg-blue-400 text-richblack-5 font-medium border-blue-600"
-                                    : "text-richblack-200 border-black"
-                                }`}
-                  >
-                    <input
-                      type="radio"
-                      value="Student"
-                      {...register("accountType")}
-                      defaultChecked
-                      className="hidden "
-                    />
-                    Student
-                  </label>
-                  <label
-                    className={`cursor-pointer px-3 py-2 rounded-xl md:rounded-full border transition-all duration-200 hover:scale-105 
-                                ${
-                                  accountType === "Instructor"
-                                    ? "bg-blue-400 text-richblack-5 font-medium border-blue-600"
-                                    : "text-richblack-200 border-black"
-                                }`}
-                  >
-                    <input
-                      type="radio"
-                      value="Instructor"
-                      {...register("accountType")}
-                      className="hidden"
-                    />
-                    Instructor
-                  </label>
-                  <label
-                    className={`cursor-pointer px-3 py-2 rounded-xl border   md:rounded-full transition-all duration-200 hover:scale-105 
-                                ${
-                                  accountType === "Institute"
-                                    ? "bg-blue-400 text-richblack-5 font-medium border-blue-600"
-                                    : "text-richblack-200 border-black"
-                                }`}
-                  >
-                    <input
-                      type="radio"
-                      value="Institute"
-                      {...register("accountType")}
-                      className="hidden "
-                    />
-                    Institute
-                  </label>
+                  {["Student", "Instructor", "Institute"].map((type) => (
+                    <label
+                      key={type}
+                      className={`cursor-pointer px-3 py-2 rounded-xl border md:rounded-full transition-all duration-200 hover:scale-105 ${
+                        accountType === type
+                          ? "bg-blue-400 text-richblack-5 font-medium border-blue-600"
+                          : "text-richblack-200 border-black"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        value={type}
+                        {...register("accountType")}
+                        defaultChecked={type === "Student"}
+                        className="hidden"
+                      />
+                      {type}
+                    </label>
+                  ))}
                 </div>
               </div>
 
               {/* Full Name */}
               <div className="flex flex-col">
                 <label>
-                  {accountType === "Institute"
-                    ? "Name of Institute:"
-                    : "Full Name:"}
+                  {accountType === "Institute" ? "Name of Institute:" : "Full Name:"}
                 </label>
                 <div className="relative w-[20rem]">
                   <input
                     type="text"
                     {...register("fullName", { required: true })}
-                    className={`bg-gray-500 w-full rounded-md h-[2rem] px-3 hover:scale-105 duration-200 
-                                     ${
-                                       errors.fullName ? "border-red-500" : ""
-                                     }`}
+                    className={`bg-gray-500 w-full rounded-md h-[2rem] px-3 hover:scale-105 duration-200 ${
+                      errors.fullName ? "border-red-500" : ""
+                    }`}
                   />
                   {errors.fullName && (
                     <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-red-500 text-sm">
@@ -181,8 +152,9 @@ const SignUp = ({ toggleLogInForm }) => {
                     {...register("password", {
                       required: "Password is required",
                     })}
-                    className={`bg-gray-500 w-full rounded-md h-[2rem] px-3 pr-10 hover:scale-105 duration-200 
-                ${errors.password ? "border-red-500" : ""}`}
+                    className={`bg-gray-500 w-full rounded-md h-[2rem] px-3 pr-10 hover:scale-105 duration-200 ${
+                      errors.password ? "border-red-500" : ""
+                    }`}
                   />
                   <button
                     type="button"
@@ -208,8 +180,9 @@ const SignUp = ({ toggleLogInForm }) => {
                     {...register("confirmPassword", {
                       required: "Confirm Password is required",
                     })}
-                    className={`bg-gray-500 w-full rounded-md h-[2rem] px-3 pr-10 hover:scale-105 duration-200 
-                ${errors.confirmPassword ? "border-red-500" : ""}`}
+                    className={`bg-gray-500 w-full rounded-md h-[2rem] px-3 pr-10 hover:scale-105 duration-200 ${
+                      errors.confirmPassword ? "border-red-500" : ""
+                    }`}
                   />
                   <button
                     type="button"
@@ -230,7 +203,7 @@ const SignUp = ({ toggleLogInForm }) => {
               <div className="flex mt-2 justify-center w-[20rem]">
                 <button
                   type="submit"
-                  className="bg-amber-400  text-black px-2 py-2 rounded-[5rem] w-[8rem] hover:scale-95 duration-200 cursor-pointer"
+                  className="bg-amber-400 text-black px-2 py-2 rounded-[5rem] w-[8rem] hover:scale-95 duration-200 cursor-pointer"
                 >
                   SignUp
                 </button>

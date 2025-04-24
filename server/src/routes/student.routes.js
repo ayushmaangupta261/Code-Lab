@@ -1,15 +1,12 @@
 import { Router } from "express";
 import {
   authStatus,
-  registerUser,
-  loginUser,
-  logOutUser,
-} from "../controllers/user.controllers.js";
-
-import {
-  createQuestion,
-  getSolvedQuestions,
-} from "../controllers/instructor.controller.js";
+  registerStudent,
+  loginStudent,
+  logoutStudent,
+  getAllCollegesListForStudents,
+  editStudentDetails,
+} from "../controllers/student.controllers.js";
 
 import { upload } from "../middlewares/multer.middleware.js";
 
@@ -31,18 +28,20 @@ router.route("/register").post(
       maxCount: 1,
     },
   ]),
-  registerUser
+  registerStudent
 );
 
 // login the user
-router.route("/login").post(loginUser);
-router.route("/logOut").post(authMiddleware, logOutUser);
+router.route("/login").post(loginStudent);
+router.route("/logOut").post(authMiddleware, logoutStudent);
 
 // auth status
 router.route("/auth-status").get(authMiddleware, authStatus);
 
-// instructor route
-router.route("/post-question").post(authMiddleware, createQuestion); // add middleware
-router.route("/get-solved-questions").get(authMiddleware, getSolvedQuestions);
+// setting routes
+router
+  .route("/get-all-college-list-for-student")
+  .get(authMiddleware, getAllCollegesListForStudents);
+router.route("/edit-student-details").post(authMiddleware, editStudentDetails);
 
 export default router;

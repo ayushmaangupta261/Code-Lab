@@ -2,7 +2,7 @@ import jwt, { decode } from "jsonwebtoken";
 
 const authMiddleware = (req, res, next) => {
   try {
-    // console.log("req -> ",req.body);
+    // console.log("req -> ",req.headers);
     // console.log("cookie -> ",req.cookies)
     const authHeader = req.headers["authorization"];
     // console.log("Token -> ",authHeader);
@@ -30,7 +30,7 @@ const authMiddleware = (req, res, next) => {
     // Verify the token
     const decoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
 
-    // console.log("Decoded -> ",decoded)
+    console.log("Decoded -> ",decoded)
 
     if (!decoded) {
       return res

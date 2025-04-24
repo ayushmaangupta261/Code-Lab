@@ -7,6 +7,8 @@ import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { login } from "../../services/operations/authApi";
 import { logout } from "../../services/operations/authApi";
+import { logoutInstructor } from "../../services/operations/instructorApi";
+import { logoutInstitute } from "../../services/operations/instituteAPI";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -15,8 +17,21 @@ const Navbar = () => {
   console.log("User in navbar -> ", user);
 
   const handleLogOut = () => {
-    dispatch(logout(navigate, user?.accessToken));
+    if (!user) return;
+  
+    const role = user.accountType;
+    console.log("Role ->", role);
+  
+    // Dispatch logout function based on role
+    if (role === "Instructor") {
+      dispatch(logoutInstructor(navigate));
+    } else if (role === "Institute") {
+      dispatch(logoutInstitute(navigate));
+    } else {
+      dispatch(logout(navigate)); // Student or default
+    }
   };
+  
 
   return (
     <>
@@ -74,7 +89,7 @@ const Navbar = () => {
           {user && (
             <button
               className="text-lg hover:scale-110 transition-all duration-300"
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate("/dashboard/overview")}
             >
               Dashboard
             </button>

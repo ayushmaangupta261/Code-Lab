@@ -2,11 +2,12 @@ import { populate } from "dotenv";
 import { Question } from "../models/question.model.js";
 import { SampleCode } from "../models/sampleCode.model.js";
 import { Solution } from "../models/solution.model.js";
-import { User } from "../models/user.model.js";
+
 import { giveMarks } from "./ai.controller.js";
 import { compileCode } from "./compiler.controller.js";
 import fs from "fs";
 import path from "path";
+import { Student } from "../models/user.model.js";
 
 const getAllAssignments = async (req, res) => {
   try {
@@ -26,7 +27,7 @@ const getAllAssignments = async (req, res) => {
     console.log("Going to fetch the user");
 
     // fetch the user
-    const loggedInUser = await User.findById(user._id);
+    const loggedInUser = await Student.findById(user._id);
 
     console.log("loggedInUser -> ", loggedInUser);
 
@@ -156,7 +157,7 @@ const submitAssignment = async (req, res) => {
     }
 
     //update the user
-    const updatedUser = await User.findByIdAndUpdate(
+    const updatedUser = await Student.findByIdAndUpdate(
       user?._id,
       {
         $addToSet: { questionsSolved: assignmentId },
@@ -236,7 +237,7 @@ const completedAssignments = async (req, res) => {
 
     console.log("Find User in db -> ", user._id);
 
-    const findUser = await User.findById(user._id).populate({
+    const findUser = await Student.findById(user._id).populate({
       path: "instructor",
     });
 
