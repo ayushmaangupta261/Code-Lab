@@ -19,6 +19,7 @@ import videoCall from "../assets/Editor/video-call.png";
 import whiteBoard from "../assets/Editor/whiteboard.png";
 import LiveMeet from "../components/Terminal/LiveMeet.jsx";
 import Whiteboard from "../components/Terminal/WhiteBoard.jsx";
+import { useSelector } from "react-redux";
 
 const EditorPage = () => {
   const socketRef = useRef(null);
@@ -27,6 +28,10 @@ const EditorPage = () => {
   const ReactNavigate = useNavigate();
   const { roomId } = useParams();
   const [clients, setClients] = useState([]);
+  const { user } = useSelector((state) => state.auth);
+  const { email, projectName } = location.state || {};
+
+  console.log("Project name -> ",projectName)
 
   /** ───────────────────────────────────────────────
    *  Initialize Socket Connection
@@ -57,16 +62,17 @@ const EditorPage = () => {
         // ✅ Join Room only when socket is connected
         socketRef.current.emit(ACTIONS.JOIN, {
           roomId,
-          userName: location.state?.userName,
+          email: location.state?.email,
+          fullName: user?.fullName,
         });
 
         // ✅ Ensure socket exists before adding listeners
         if (socketRef.current) {
           socketRef.current.on(
             ACTIONS.JOINED,
-            ({ clients, userName, socketId }) => {
-              if (userName !== location.state?.userName) {
-                toast.success(`${userName} joined the room.`);
+            ({ clients, email, socketId, fullName }) => {
+              if (email !== location.state?.email) {
+                toast.success(`${email} joined the room.`);
               }
               setClients(clients);
 
@@ -82,11 +88,13 @@ const EditorPage = () => {
 
           socketRef.current.on(
             ACTIONS.DISCONNECTED,
-            ({ socketId, userName }) => {
-              toast.success(`${userName} left the room.`);
-              setClients((prev) =>
-                prev.filter((client) => client.socketId !== socketId)
-              );
+            ({ socketId, email, fullName }) => {
+              if (email !== "Unknown") {
+                toast.success(`${email} left the room.`);
+                setClients((prev) =>
+                  prev.filter((client) => client.socketId !== socketId)
+                );
+              }
             }
           );
         }
@@ -124,7 +132,7 @@ const EditorPage = () => {
    *  Leave Room and Navigate Back
    *  ─────────────────────────────────────────────── */
   const leaveRoom = () => {
-    ReactNavigate("/");
+    ReactNavigate("/dashboard/Projects");
   };
 
   if (!location.state) {
@@ -135,11 +143,15 @@ const EditorPage = () => {
   const [showMenu, setShowMenu] = useState("clients");
 
   const handleMenuToggle = (menu) => {
-    console.log("handleMenuToggle , ", menu);
+    console.log("handleMenuToggle  " + menu);
     setShowMenu(menu);
+    
   };
 
-  console.log(`Selected file ${selectedFile}`);
+  
+
+ 
+  console.log(`Selected file -> ${selectedFile}`);
 
   return (
     <div className="mainwrap text-gray-100 flex  w-full gap-x-3 mt-[4rem] overflow-hidden h-[85vh] ">
@@ -205,15 +217,17 @@ const EditorPage = () => {
             <div className="flex gap-x-2 flex-wrap mx-auto bg-gray-800 px-2 rounded-md">
               {/* files */}
               {showMenu === "files" && (
-                <FileTree onSelect={(path) => setSelectedFile(path)} />
+                <FileTree onSelect={(path) => setSelectedFile(path)} roomId={roomId} projectName={projectName}/>
               )}
             </div>
             {/* clients */}
             <div className="flex gap-x-2 flex-wrap mx-auto bg-gray-800 px-2 rounded-md">
               {showMenu === "clients" &&
-                clients.map((client) => (
-                  <Client userName={client.userName} key={client.socketId} />
-                ))}
+                clients
+                  .filter((client) => client.email !== "Unknown")
+                  .map((client) => (
+                    <Client email={client.email} key={client.socketId} />
+                  ))}
             </div>
             {/* Video chat */}
             <div className="flex gap-x-2 flex-wrap mx-auto bg-gray-800 px-2 rounded-md">
@@ -238,41 +252,6 @@ const EditorPage = () => {
           </button>
         </div>
       </div>
-
-      {/* <div className="editorwrap w-[80%]  flex flex-col justify-between">
-        {/* working directory */}
-      {/* <div className="bg-gray-800 w-[1202px] px-4 py-2 rounded-md text-gray-200 font-semibold flex items-center gap-2 shadow-md">
-        <span className="text-yellow-400">
-          {selectedFile && <img src={fileImg} alt="" className="w-[1rem]" />}
-        </span>
-        <p className="truncate w-full">
-          {selectedFile.replaceAll("/", " > ") || (
-            <p>
-              No file selected,{" "}
-              <span className="text-amber-300">Please select a file !</span>
-            </p>
-          )}
-        </p>
-      </div> */}
-
-      {/* Code Editor */}
-      {/* <div className=" flex flex-col rounded-lg h-[50vh] mt-1 mb-1 border-amber-300 w-[79vw]">
-          <Editor
-            socketRef={socketRef}
-            roomId={roomId}
-            onCodeChange={(code) => {
-              codeRef.current = code;
-            }}
-            selectedFile={selectedFile}
-          />
-        </div> */}
-
-      {/* Terminal */}
-      {/* <div className="">
-          <TerminalComponent />
-        </div> */}
-
-      {/* </div> */}
 
       <div className="editorwrap w-[80%]  flex flex-col justify-between">
         {showMenu !== "whiteboard" ? (
@@ -314,8 +293,8 @@ const EditorPage = () => {
             </div>
           </div>
         ) : (
-          <div className="flex justify-center items-center mt-2 ">
-            <Whiteboard />
+          <div className="flex w-full h-full justify-center items-center mt-2 ">
+            <Whiteboard roomId={roomId} />
           </div>
         )}
       </div>

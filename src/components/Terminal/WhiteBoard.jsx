@@ -1,24 +1,22 @@
 import React, { useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import html2canvas from "html2canvas";
-import { initSocket } from "../../services/socket";
-import { useParams } from "react-router";
+import { io } from "socket.io-client";
 import { useSelector } from "react-redux";
-import { useLocation } from "react-router";
+import { useParams } from "react-router";
 
 const Whiteboard = () => {
   const drawCanvasRef = useRef(null);
   const cursorCanvasRef = useRef(null);
   const cursorsRef = useRef({});
   const socketRef = useRef(null);
-  const roomId = useParams()?.roomId;
-  const location = useLocation();
-  const { userName } = location?.state || {};
+  const { user } = useSelector((state) => state.auth);
+  const { roomId } = useParams();
 
   const [isDrawing, setIsDrawing] = useState(false);
   const [color, setColor] = useState("black");
   // const [roomId, setRoomId] = useState("");
-  // const [userName, setuserName] = useState("");
+  const [username, setUsername] = useState(user?.fullName || "");
   const [joined, setJoined] = useState(false);
   const [userId] = useState(uuidv4());
   const [lines, setLines] = useState([]);
@@ -32,30 +30,6 @@ const Whiteboard = () => {
   const eraserImg = useRef(new Image());
 
   const handlePointerUp = () => setIsDrawing(false);
-
-  // setup
-  useEffect(() => {
-    const setupSocketAndJoinRoom = async () => {
-      if (!roomId || !userName) return;
-
-      const socket = await initSocket();
-      socketRef.current = socket;
-
-      console.log("Room Id -> ", roomId);
-      console.log("user id -> ", userId);
-
-      socket.emit("join-whiteboard", { roomId, userId });
-      setJoined(true);
-    };
-
-    setupSocketAndJoinRoom();
-
-    return () => {
-      if (socketRef.current) {
-        socketRef.current.disconnect();
-      }
-    };
-  }, [roomId, userName]);
 
   const handlePointerDown = (e) => {
     if (!joined) return;
@@ -182,7 +156,11 @@ const Whiteboard = () => {
     eraserImg.current.src = "/icons/eraser.png";
   }, []);
 
-  //===============================================================
+  useEffect(() => {
+    socketRef.current = io("http://localhost:4000"); // Connect using Socket.IO
+
+    return () => socketRef.current.disconnect();
+  }, []);
 
   useEffect(() => {
     if (joined && drawCanvasRef.current && cursorCanvasRef.current) {
@@ -199,7 +177,6 @@ const Whiteboard = () => {
     const drawCtx = drawCanvasRef.current.getContext("2d");
 
     socketRef.current.on("draw", (data) => {
-      console.log("Draw");
       if (data.userId !== userId) {
         drawLine(
           data.x0,
@@ -230,13 +207,12 @@ const Whiteboard = () => {
     });
 
     socketRef.current.on("cursor", (data) => {
-      console.log("cursor -> ", data);
       if (data.userId !== userId) {
         cursorsRef.current[data.userId] = {
           x: data.x,
           y: data.y,
           color: data.color,
-          userName: data.userName,
+          username: data.username,
         };
       }
     });
@@ -250,10 +226,10 @@ const Whiteboard = () => {
         cursorCanvasRef.current.height
       );
 
-      Object.values(cursorsRef.current).forEach(({ x, y, color, userName }) => {
+      Object.values(cursorsRef.current).forEach(({ x, y, color, username }) => {
         ctx.font = "12px Arial";
         ctx.fillStyle = theme === "dark" ? "white" : "black";
-        ctx.fillText(userName, x + 15, y + 5);
+        ctx.fillText(username, x + 15, y + 5);
 
         const icon = color === "white" ? eraserImg.current : penImg.current;
         ctx.drawImage(icon, x - 8, y - 8, 20, 20);
@@ -267,6 +243,28 @@ const Whiteboard = () => {
       socketRef.current.off("cursor");
     };
   }, [joined, theme]);
+
+  useEffect(() => {
+    const socket = socketRef.current;
+
+    const handleCursor = (data) => {
+      if (data.userId !== userId) {
+        cursorsRef.current[data.userId] = {
+          x: data.x,
+          y: data.y,
+          color: data.color,
+          username: data.username,
+        };
+      }
+    };
+
+    socket.on("cursor", handleCursor);
+
+    return () => {
+      // 🧹 Clean up listener on unmount or before re-run
+      socket.off("cursor", handleCursor);
+    };
+  }, [userId]); // Only re-run if userId changes
 
   const drawLine = (
     x0,
@@ -302,7 +300,7 @@ const Whiteboard = () => {
         size,
         penType,
         userId,
-        userName,
+        username,
         roomId,
       };
       socketRef.current.emit("draw", lineData);
@@ -311,6 +309,16 @@ const Whiteboard = () => {
       setRedoStack([]);
     }
   };
+
+  useEffect(() => {
+    const joinRoom = () => {
+      if (!roomId.trim() || !username.trim()) return;
+      socketRef.current.emit("join-board", { roomId, userId });
+      setJoined(true);
+    };
+
+    joinRoom();
+  },[roomId]);
 
   const handlePointerMove = (e) => {
     if (!joined) return;
@@ -323,7 +331,7 @@ const Whiteboard = () => {
       y,
       color,
       userId,
-      userName,
+      username,
       roomId,
     });
 
@@ -380,134 +388,180 @@ const Whiteboard = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const canvas = drawCanvasRef.current;
+    const cursorCanvas = cursorCanvasRef.current;
+
+    if (canvas) {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    }
+
+    if (cursorCanvas) {
+      cursorCanvas.width = cursorCanvas.offsetWidth;
+      cursorCanvas.height = cursorCanvas.offsetHeight;
+    }
+  }, [joined]); // trigger when joined = true
+
   return (
     <div
       className={`${
         theme === "dark" ? "bg-[#121212]" : "bg-white"
-      } w-[79vw] h-[38rem] border  overflow-hidden flex flex-col justify-center relative rounded-md`}
+      } border h-[98%] mb-[1rem] rounded overflow-hidden  flex justify-center items-start shadow`}
     >
-      <>
-        <canvas
-          ref={drawCanvasRef}
-          className=" z-[1]  mt-[35rem] border shadow w-[79vw] h-[38rem]"
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          onPointerLeave={handlePointerUp}
-          
-        />
-        <canvas
-          ref={cursorCanvasRef}
-          className=" z-[2] pointer-events-none  w-[79vw] h-[38rem]"
-        />
-      </>
-
-      {/* tools */}
-      <div
-        className={`absolute  bottom-4 left-1/2 -translate-x-1/2 w-[90%] flex flex-wrap justify-between z-[3] p-2.5 rounded-lg shadow-lg border ${
-          theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-black"
-        }`}
-      >
-        {/* pen and eraser */}
-        <div className="flex flex-wrap gap-2 mb-2">
-          <button
-            onClick={() => {
-              setColor("black");
-              setBrushSize(2);
-            }}
-            className="bg-black text-white px-3 py-1 rounded"
-          >
-            Black
-          </button>
-          <button
-            onClick={() => {
-              setColor("red");
-              setBrushSize(2);
-            }}
-            className="bg-red-500 text-white px-3 py-1 rounded"
-          >
-            Red
-          </button>
-          <button
-            onClick={() => {
-              setColor("blue");
-              setBrushSize(2);
-            }}
-            className="bg-blue-500 text-white px-3 py-1 rounded"
-          >
-            Blue
-          </button>
-          <button
-            onClick={() => {
-              setColor("white");
-              setBrushSize(10);
-            }}
-            className="bg-gray-300 text-black px-3 py-1 rounded"
-          >
-            Eraser
-          </button>
-        </div>
-
-        {/* brush size */}
-        <div className="mb-2">
-          <label className="mr-2">Brush Size:</label>
+      {/* {!joined ? (
+        <div
+          className={`p-5 ${theme === "dark" ? "text-white" : "text-black"}`}
+        >
+          <h2 className="text-2xl font-semibold mb-4">
+            Join a Whiteboard Room
+          </h2>
           <input
-            type="range"
-            min="1"
-            max="100"
-            value={brushSize}
-            onChange={(e) => setBrushSize(parseInt(e.target.value))}
-            className="mr-2"
+            type="text"
+            placeholder="Enter Room ID"
+            value={roomId}
+            // onChange={(e) => setRoomId(e.target.value)}
+            className="mb-3 p-2 border rounded w-full"
           />
-          <span>{brushSize}</span>
+          <input
+            type="text"
+            placeholder="Enter Your Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="mb-3 p-2 border rounded w-full"
+          />
+          <button
+            onClick={joinRoom}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          >
+            Join Room
+          </button>
+        </div>
+      ) : ( */}
+      <>
+        <div className="relative w-[80vw] h-[83vh] border">
+          <canvas
+            ref={drawCanvasRef}
+            className="absolute top-0 left-0 z-10 w-full h-full"
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerLeave={handlePointerUp}
+          />
+          <canvas
+            ref={cursorCanvasRef}
+            className="absolute top-0 left-0 z-20 w-full h-full pointer-events-none"
+          />
         </div>
 
-        {/* pen type */}
-        <div className="mb-2">
-          <label className="mr-2">Pen Type:</label>
-          <select
-            value={penType}
-            onChange={(e) => setPenType(e.target.value)}
-            className="p-1 border rounded"
-          >
-            <option value="solid">Solid</option>
-            <option value="dashed">Dashed</option>
-            <option value="dotted">Dotted</option>
-          </select>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={undoLast}
-            className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
-          >
-            Undo
-          </button>
-          <button
-            onClick={redoLast}
-            className="bg-purple-500 text-white px-3 py-1 rounded hover:bg-purple-600"
-          >
-            Redo
-          </button>
-          {/* <button
+        {/* tools */}
+        <div
+          className={`fixed bottom-8 w-[70vw]   transform-translate-x-1/2   mx-auto flex justify-between  z-[10] p-2.5 rounded-lg shadow-lg border ${
+            theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-black"
+          }`}
+        >
+          {/* pen and eraser */}
+          <div className="flex  gap-x-2">
+            <button
+              onClick={() => {
+                setColor("black");
+                setBrushSize(2);
+              }}
+              className="bg-black text-white px-3 py-1 rounded"
+            >
+              Black
+            </button>
+            <button
+              onClick={() => {
+                setColor("red");
+                setBrushSize(2);
+              }}
+              className="bg-red-500 text-white px-3 py-1 rounded"
+            >
+              Red
+            </button>
+            <button
+              onClick={() => {
+                setColor("blue");
+                setBrushSize(2);
+              }}
+              className="bg-blue-500 text-white px-3 py-1 rounded"
+            >
+              Blue
+            </button>
+            <button
+              onClick={() => {
+                setColor("white");
+                setBrushSize(10);
+              }}
+              className="bg-gray-300 text-black px-3 py-1 rounded"
+            >
+              Eraser
+            </button>
+          </div>
+
+          {/* brush size */}
+          <div className="mb-2">
+            <label className="mr-2">Brush Size:</label>
+            <input
+              type="range"
+              min="1"
+              max="100"
+              value={brushSize}
+              onChange={(e) => setBrushSize(parseInt(e.target.value))}
+              className="mr-2"
+            />
+            <span>{brushSize}</span>
+          </div>
+
+          {/* pen type */}
+          <div className="mb-2">
+            <label className="mr-2">Pen Type:</label>
+            <select
+              value={penType}
+              onChange={(e) => setPenType(e.target.value)}
+              className="p-1 border rounded"
+            >
+              <option value="solid">Solid</option>
+              <option value="dashed">Dashed</option>
+              <option value="dotted">Dotted</option>
+            </select>
+          </div>
+          <div className="flex flex-wrap gap-2 h-[3rem]">
+            <button
+              onClick={undoLast}
+              className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
+            >
+              Undo
+            </button>
+            <button
+              onClick={redoLast}
+              className="bg-purple-500 text-white px-3 py-1 rounded hover:bg-purple-600"
+            >
+              Redo
+            </button>
+            {/* <button
                 onClick={clearCanvas}
                 className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
               >
                 Clear
               </button> */}
-          <button
-            onClick={downloadCanvas}
-            className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700"
-          >
-            Download
-          </button>
-          <button
-            onClick={toggleTheme}
-            className="bg-gray-700 text-white px-3 py-1 rounded hover:bg-gray-800"
-          >
-            Toggle Theme
-          </button>
+            <button
+              onClick={downloadCanvas}
+              className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700"
+            >
+              Download
+            </button>
+            <button
+              onClick={toggleTheme}
+              className="bg-gray-700 text-white px-3 py-1 rounded hover:bg-gray-800"
+            >
+              Toggle Theme
+            </button>
+          </div>
         </div>
-      </div>
+      </>
+      {/* )} */}
     </div>
   );
 };

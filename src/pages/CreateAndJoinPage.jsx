@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 const CreateAndJoinPage = () => {
 
     const [roomId, setRoomId] = useState('');
-    const [userName, setUserName] = useState('');
+    const [email, setemail] = useState('');
     const navigate = useNavigate();
 
 
@@ -21,7 +21,7 @@ const CreateAndJoinPage = () => {
 
     // Join room
     const joinRoom = () => {
-        if (!roomId || !userName) {
+        if (!roomId || !email) {
             toast.error('Please fill both Room Id and User Name');
             return;
         }
@@ -29,7 +29,7 @@ const CreateAndJoinPage = () => {
         // redirect
         navigate(`/editor/${roomId}`, {
             state: {
-                userName
+                email
             }
         });
 
@@ -55,7 +55,7 @@ const CreateAndJoinPage = () => {
                 <p className='mainLabel mt-5 mb-5'>Paste your room id</p>
                 <div className='flex flex-col gap-y-2'>
                     <input type="text" className='inputBox bg-gray-600 px-2 py-1 rounded-md' placeholder='Room ID' value={roomId} onChange={(e) => setRoomId(e.target.value)} onKeyUp={handleInputEnter} />
-                    <input type="text" className='inputBox bg-gray-600 px-2 py-1 rounded-md' placeholder='User Name' value={userName} onChange={(e) => setUserName(e.target.value)} onKeyUp={handleInputEnter} />
+                    <input type="text" className='inputBox bg-gray-600 px-2 py-1 rounded-md' placeholder='User Name' value={email} onChange={(e) => setemail(e.target.value)} onKeyUp={handleInputEnter} />
                     <button className='btn joinBtn px-2 py-1 bg-green-500 text-black w-[5rem] ml-auto rounded-full mt-2 mb-2 cursor-pointer hover:bg-green-400 hover:scale-105 duration-200'
                         onClick={joinRoom}
                     >

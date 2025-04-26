@@ -54,7 +54,7 @@ const getFiles = async (req, res) => {
       return res.status(400).json({ error: "Path is required" });
     }
 
-    let content = await fs.readFile(`./server/projects${path}`, "utf-8");
+    let content = await fs.readFile(`./server/projects/${path}`, "utf-8");
     console.log("content of file -> ", content);
 
     if (content.length == 0) {
@@ -209,7 +209,6 @@ const createFolder = (req, res) => {
     }
 
     console.log("Refresh sent");
-    
 
     return res.status(200).json({
       message: "Folder created successfully",
@@ -226,3 +225,223 @@ const createFolder = (req, res) => {
 };
 
 export { generateFileTree, getFiles, deleteFile, createFile, createFolder };
+
+// import fs from "fs/promises";
+// import path from "path";
+// import { getIOInstance } from "../webSocket/SocketStore.js";
+
+// let fileTreeCache = null; // Cached version of the file tree
+
+// // Function to regenerate the file tree
+// const generateFileTree = async () => {
+//   try {
+//     const tree = {};
+
+//     const buildTree = async (currentDir, currentTree) => {
+//       try {
+//         const files = await fs.readdir(currentDir);
+//         for (const file of files) {
+//           const filePath = path.join(currentDir, file);
+//           const stats = await fs.stat(filePath);
+
+//           if (stats.isDirectory()) {
+//             currentTree[file] = {};
+//             await buildTree(filePath, currentTree[file]);
+//           } else {
+//             currentTree[file] = null;
+//           }
+//         }
+//       } catch (err) {
+//         console.error(`Error reading ${currentDir}:`, err.message);
+//       }
+//     };
+
+//     console.log("Building");
+    
+//     await buildTree("./server/projects", tree);
+//     fileTreeCache = tree; // Cache the file tree
+//     return tree;
+//   } catch (error) {
+//     console.error("Error generating file tree:", error.message);
+//     throw new Error("Internal Server Error");
+//   }
+// };
+
+// // Function to get file tree (from cache or regenerate it if necessary)
+// const getFileTree = async (req, res) => {
+//   try {
+//     if (!fileTreeCache) {
+//       // Regenerate file tree if it's not cached
+//       const tree = await generateFileTree();
+//       return res.json({ tree });
+//     } else {
+//       // Return cached tree
+//       return res.json({ tree: fileTreeCache });
+//     }
+//   } catch (error) {
+//     return res.status(500).json({ error: "Internal Server Error" });
+//   }
+// };
+
+// // Get file content
+// const getFiles = async (req, res) => {
+//   try {
+//     const { path: filePath } = req.body;
+
+//     if (!filePath) {
+//       return res.status(400).json({ error: "Path is required" });
+//     }
+
+//     let content = await fs.readFile(`./server/projects/${filePath}`, "utf-8");
+
+//     // if (!content) {
+//     //   return res.status(404).json({ message: "File not found", success: false });
+//     // }
+
+//     // If file is empty, return a default space
+//     if (content.length === 0) {
+//       content = " ";
+//     }
+
+//     return res.status(200).json({
+//       content,
+//       path: filePath,
+//       success: true,
+//     });
+//   } catch (error) {
+//     console.error("Error reading file:", error.message);
+//     return res.status(500).json({ message: error.message, success: false });
+//   }
+// };
+
+// // Delete file or folder
+// const deleteFile = async (req, res) => {
+//   try {
+//     const { selectedFile } = req.body;
+
+//     if (!selectedFile) {
+//       return res.status(400).json({
+//         message: "Selected file or folder is required",
+//         success: false,
+//       });
+//     }
+
+//     const filePath = path.join(
+//       process.cwd(),
+//       "server",
+//       "projects",
+//       selectedFile
+//     );
+
+//     try {
+//       await fs.access(filePath); // Check if file exists
+//     } catch (error) {
+//       return res
+//         .status(404)
+//         .json({ success: false, message: "File or folder not found!" });
+//     }
+
+//     await fs.rm(filePath, { recursive: true, force: true });
+
+//     // Clear the cache after deletion to force regeneration on the next request
+//     fileTreeCache = null;
+
+//     const io = getIOInstance();
+//     if (io) {
+//       io.emit("file:refresh", { filePath });
+//     }
+
+//     return res
+//       .status(200)
+//       .json({ success: true, message: "File or folder deleted successfully!" });
+//   } catch (error) {
+//     console.error("Error deleting file/folder:", error.message);
+//     return res.status(500).json({ error: "Internal Server Error" });
+//   }
+// };
+
+// // Create a file
+// const createFile = async (req, res) => {
+//   try {
+//     const { selectedFile } = req.body;
+
+//     if (!selectedFile) {
+//       return res.status(400).json({
+//         message: "Selected file is required",
+//         success: false,
+//       });
+//     }
+
+//     const filePath = path.join(
+//       process.cwd(),
+//       "server",
+//       "projects",
+//       selectedFile
+//     );
+
+//     await fs.writeFile(filePath, "");
+
+//     // Clear the cache after creation to force regeneration on the next request
+//     fileTreeCache = null;
+
+//     const io = getIOInstance();
+//     if (io) {
+//       io.emit("file:refresh", { filePath });
+//     }
+
+//     return res.status(200).json({
+//       message: "File created successfully",
+//       success: true,
+//     });
+//   } catch (error) {
+//     console.error("Error creating file:", error.message);
+//     return res.status(400).json({
+//       message: error.message,
+//       success: false,
+//     });
+//   }
+// };
+
+// // Create a folder
+// const createFolder = async (req, res) => {
+//   try {
+//     const { selectedFolder } = req.body;
+
+//     if (!selectedFolder) {
+//       return res.status(400).json({
+//         message: "Selected folder is required",
+//         success: false,
+//       });
+//     }
+
+//     const folderPath = path.join(
+//       process.cwd(),
+//       "server",
+//       "projects",
+//       selectedFolder
+//     );
+
+//     await fs.mkdir(folderPath, { recursive: true });
+
+//     // Clear the cache after folder creation to force regeneration on the next request
+//     fileTreeCache = null;
+
+//     const io = getIOInstance();
+//     if (io) {
+//       io.emit("file:refresh", folderPath);
+//     }
+
+//     return res.status(200).json({
+//       message: "Folder created successfully",
+//       success: true,
+//     });
+//   } catch (error) {
+//     console.error("Error creating folder:", error.message);
+//     return res.status(400).json({
+//       message: error.message,
+//       success: false,
+//     });
+//   }
+// };
+
+// export { generateFileTree, getFiles, deleteFile, createFile, createFolder };

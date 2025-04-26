@@ -31,6 +31,8 @@
     "dotenv": "^16.4.7",
     "framer-motion": "^12.7.4",
     "html2canvas": "^1.4.1",
+    "lodash.clonedeep": "^4.5.0",
+    "lodash.isequal": "^4.5.0",
     "lucide-react": "^0.487.0",
     "nodemon": "^3.1.9",
     "react": "^19.0.0",

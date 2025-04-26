@@ -38,6 +38,7 @@ const Editor = ({ socketRef, roomId, onCodeChange, language = "javascript", sele
   const codeRef = useRef("");
   const selectedFileContentRef = useRef("");
   const timeoutRef = useRef(null);
+  
 
   const modeMap = {
     javascript: "javascript",

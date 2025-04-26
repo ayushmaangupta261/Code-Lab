@@ -92,7 +92,7 @@ export const login = (data, navigate) => async (dispatch) => {
   } catch (error) {
     console.log("Error: ", error);
     dispatch(setAuthLoading(false));
-    toast.error(error.message);
+    toast.error("Login Error, check your credentials");
   }
 };
 

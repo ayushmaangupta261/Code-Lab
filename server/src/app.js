@@ -41,6 +41,7 @@ import aiRoutes from "./routes/ai.routes.js";
 import assignmentRoutes from "./routes/assignment.routes.js";
 import codeColaborationRoutes from "./routes/codeColaboration.route.js";
 import instrucrtorRoutes from "./routes/instructor.routes.js";
+import roomRoutes from "./routes/room.routes.js";
 
 // route declaration
 app.use("/api/v1/student", studentRoute);
@@ -48,6 +49,7 @@ app.use("/api/v1/code", codeingRoutes);
 app.use("/api/v1/institute", instituteRoutes);
 app.use("/api/v1/ai-routes", aiRoutes);
 app.use("/api/v1/code-collaboration", codeColaborationRoutes);
+app.use("/api/v1/room", roomRoutes);
 
 app.use("/api/v1/assignment", assignmentRoutes);
 app.use("/api/v1/instructor", instrucrtorRoutes);

@@ -2,12 +2,16 @@ import React, { useEffect, useRef } from "react";
 import { Terminal } from "xterm";
 import "xterm/css/xterm.css";
 import { io } from "socket.io-client";
+// ✅ Correct
+import { useNavigate, useParams, useLocation } from "react-router-dom";
+
 import "./Terminal.css"; // ✅ Custom CSS file
 
 const TerminalComponent = () => {
   const terminalRef = useRef(null);
   const socketRef = useRef(null);
   const xtermRef = useRef(null);
+  const { roomId } = useParams();
 
   useEffect(() => {
     if (!terminalRef.current) return;
@@ -16,7 +20,7 @@ const TerminalComponent = () => {
       cursorBlink: true,
       theme: { background: "#000", foreground: "#fff" },
       fontSize: 14,
-      scrollback: 1000, 
+      scrollback: 1000,
     });
 
     xterm.open(terminalRef.current);
@@ -26,6 +30,7 @@ const TerminalComponent = () => {
       transports: ["websocket"],
       reconnection: true,
       reconnectionAttempts: 10,
+      query: { roomId },
     });
 
     socketRef.current = socket;

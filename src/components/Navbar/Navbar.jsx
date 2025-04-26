@@ -94,14 +94,14 @@ const Navbar = () => {
               Dashboard
             </button>
           )}
-          {user && (
+          {/* {user && (
             <button
               className="text-lg hover:scale-110 transition-all duration-300"
               onClick={() => navigate("/create-and-join")}
             >
               Let's Colab
             </button>
-          )}
+          )} */}
         </div>
       </div>
 
