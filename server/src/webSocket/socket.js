@@ -110,18 +110,18 @@ export function initializeSocket(io) {
         name: "xterm-color",
         cols: 80,
         rows: 24,
-        cwd: "D:\\", // Set initial directory
-        env: process.env,
+        // cwd: "D:\\", // Set initial directory
+        // env: process.env,
       });
 
       // Force PowerShell to switch to D:\
-      if (process.platform === "win32") {
+      // if (process.platform === "win32") {
         // ptyProcess.write("D:\r\n"); // Switch to C: drive
         ptyProcess.write(
           `cd "projects\\${roomId}"\r\n`
         ); // Change to the desired directory
         ptyProcess.write("cls\r\n"); // Clear screen for a clean start
-      }
+      // }
 
       // Send terminal output to frontend
       ptyProcess.onData((data) => {
