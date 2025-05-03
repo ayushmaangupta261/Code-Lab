@@ -126,7 +126,7 @@ export function initializeSocket(io) {
         name: "xterm-color",
         cols: 80,
         rows: 24,
-        cwd: roomId, // Set working directory
+        cwd: `./projects/${roomId}`, // Set working directory
         env: process.env,
       });
 
