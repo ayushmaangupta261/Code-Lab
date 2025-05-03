@@ -1,4 +1,3 @@
-
 import { spawn } from "@lydell/node-pty";
 import ACTIONS from "../constants/Actions.js"; // Import action constants
 import chaukidar from "chokidar";
@@ -105,22 +104,37 @@ export function initializeSocket(io) {
       // Use PowerShell in Windows, Bash in Linux/Mac
       const shell = process.platform === "win32" ? "powershell.exe" : "bash";
 
-      // Start PowerShell in the specified directory
+      // // Start PowerShell in the specified directory
+      // const ptyProcess = spawn(shell, [], {
+      //   name: "xterm-color",
+      //   cols: 80,
+      //   rows: 24,
+      //   cwd: "projects", // Set initial directory
+      //   // env: process.env,
+      // });
+
+      // // Force PowerShell to switch to D:\
+      // if (process.platform === "win32") {
+      //   // ptyProcess.write("D:\r\n"); // Switch to C: drive
+      //   ptyProcess.write(
+      //     `cd "${roomId}"\r\n`
+      //   ); // Change to the desired directory
+      //   ptyProcess.write("cls\r\n"); // Clear screen for a clean start
+      // }
+
       const ptyProcess = spawn(shell, [], {
         name: "xterm-color",
         cols: 80,
         rows: 24,
-        cwd: "projects", // Set initial directory
-        // env: process.env,
+        cwd: roomId, // Set working directory
+        env: process.env,
       });
 
-      // Force PowerShell to switch to D:\
-      if (process.platform === "win32") {
-        // ptyProcess.write("D:\r\n"); // Switch to C: drive
-        ptyProcess.write(
-          `cd "${roomId}"\r\n`
-        ); // Change to the desired directory
-        ptyProcess.write("cls\r\n"); // Clear screen for a clean start
+      // Clear screen at startup
+      if (platform === "win32") {
+        ptyProcess.write("cls\r\n");
+      } else {
+        ptyProcess.write("clear\n");
       }
 
       // Send terminal output to frontend
@@ -153,7 +167,6 @@ export function initializeSocket(io) {
       io.emit("file:refresh", path); // Emitting file-changed event to all connected clients
     });
 
-    
     //----------------------------------------------------------------------------------------------------
 
     // Handle user joining a call
