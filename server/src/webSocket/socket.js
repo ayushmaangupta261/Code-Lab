@@ -65,7 +65,7 @@ export function initializeSocket(io) {
     socket.on(ACTIONS.FILE_CHANGE, async ({ path, content }) => {
       try {
         // console.log("Files to save -> ", content, " Path -> ", path);
-        await fs.writeFile(`https://code-lab-duqw.onrender.com/projects/${path}`, content); // ✅ Corrected FS usage
+        await fs.writeFile(`projects/${path}`, content); // ✅ Corrected FS usage
         // console.log(`File saved: ./projects/${path}`);
       } catch (error) {
         console.error("Error saving file:", error);
@@ -77,7 +77,7 @@ export function initializeSocket(io) {
      *  ─────────────────────────────────────────────── */
     socket.on(ACTIONS.DELETE_FILE, async ({ path }) => {
       try {
-        const fullPath = `https://code-lab-duqw.onrender.com/projects/${path}`;
+        const fullPath = `projects/${path}`;
         const stats = await fs.stat(fullPath);
 
         if (stats.isDirectory()) {
