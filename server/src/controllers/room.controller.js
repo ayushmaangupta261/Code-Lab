@@ -158,7 +158,7 @@ const createAndJoinRoom = async (req, res) => {
 
       // Create folder with the roomId inside server/projects
       const projectFolderPath =
-        "D:/Web Development/compiler/code/server/projects/" + roomId;
+        "projects/" + roomId;
       console.log("Hardcoded Path -> ", projectFolderPath); // Check resolved path
 
       // Create the directory if it doesn't exist
