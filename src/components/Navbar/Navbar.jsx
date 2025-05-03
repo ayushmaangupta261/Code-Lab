@@ -63,9 +63,9 @@ const Navbar = () => {
           >
             About
           </p>
-          <p className="text-lg hover:scale-110 transition-all duration-300">
+          {/* <p className="text-lg hover:scale-110 transition-all duration-300">
             Contact
-          </p>
+          </p> */}
 
           <div>
             {!user && (

@@ -5,7 +5,7 @@ const giveMarks = async (code) => {
     const prompt = `
     You are an expert software engineer and strict coding examiner. I will give you a student's code submission. Grade the code using the criteria below and always assign the same marks for the same code — no randomness.
     
-    🎯 Evaluation Criteria (Total: 10 Marks):
+   Evaluation Criteria (Total: 10 Marks):
     
     - Correctness (4 marks):
       - Code must produce correct output for all inputs and edge cases.
@@ -16,7 +16,7 @@ const giveMarks = async (code) => {
       - Use optimal time and space complexity.
       - Avoid redundant logic or unnecessary steps.
     
-    - Readability (2 marks):
+    - Readability (2 marks): 
       - Proper indentation and formatting.
       - Clear and meaningful variable/function names.
       - Clean logical structure.
@@ -27,7 +27,7 @@ const giveMarks = async (code) => {
       - Follow naming conventions.
       - Remove redundant code.
     
-    📤 Output Format (Must be EXACTLY like this — nothing more, nothing less):
+    Output Format (Must be EXACTLY like this — nothing more, nothing less):
     
     Return a single  array in the exact format below:
     

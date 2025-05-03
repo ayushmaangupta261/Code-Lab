@@ -117,10 +117,10 @@ const Projects = () => {
                     </p>
                   )}
                 </div>
-                <div className="flex gap-x-5 items-center  bg-slate-800 px-2 py-1 rounded-md ">
-                  <button className="w-[1.5rem] hover:scale-95 duration-200">
+                <div className="flex gap-x-5 items-center px-2 py-1 rounded-md ">
+                  {/* <button className="w-[1.5rem] hover:scale-95 duration-200">
                     <img src={deleteIcon} alt="" className="" />
-                  </button>
+                  </button> */}
                   <button
                     className="bg-green-500 px-3 py-1 rounded-md text-black hover:bg-green-400 hover:scale-95 duration-200"
                     onClick={() =>

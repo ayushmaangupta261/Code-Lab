@@ -407,7 +407,7 @@ const Whiteboard = () => {
     <div
       className={`${
         theme === "dark" ? "bg-[#121212]" : "bg-white"
-      } border h-[98%] mb-[1rem] rounded overflow-hidden  flex justify-center items-start shadow`}
+      } border h-[98%] mb-[1rem] rounded overflow-hidden  flex justify-center items-start `}
     >
       {/* {!joined ? (
         <div

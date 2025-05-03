@@ -1,0 +1,13 @@
+{
+  "name": "fbb0face-9bf3-4050-a70d-5c30769c3f39",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}

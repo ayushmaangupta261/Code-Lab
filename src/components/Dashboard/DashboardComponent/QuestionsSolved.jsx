@@ -72,7 +72,9 @@ const QuestionsSolved = () => {
         <div className="">
           <ul>
             <li>Solved : {solvedQuestions?.length}</li>
-            <li>Total Questions : {totalQuestions}</li>
+            {/* <li>Total Questions : {totalQuestions}</li> */}
+            <li>Total Questions : 100</li>
+
           </ul>
         </div>
       </div>

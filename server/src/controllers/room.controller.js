@@ -175,7 +175,7 @@ const createAndJoinRoom = async (req, res) => {
         students: [StudentInDB._id],
         instructor: StudentInDB?.instructor,
         college: StudentInDB?.collegeId,
-        projectName: projectName,
+        projectName: projectName, 
       });
 
       const populatedRoom = await Room.findById(newRoom._id)
