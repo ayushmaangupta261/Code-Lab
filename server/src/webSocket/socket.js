@@ -298,7 +298,7 @@ export function initializeSocket(io) {
     socket.on(ACTIONS.FILE_CHANGE, async ({ path, content }) => {
       try {
         // console.log("Files to save -> ", content, " Path -> ", path);
-        await fs.writeFile(`./server/projects/${path}`, content); // ✅ Corrected FS usage
+        await fs.writeFile(`https://code-lab-duqw.onrender.com/projects/${path}`, content); // ✅ Corrected FS usage
         // console.log(`File saved: ./projects/${path}`);
       } catch (error) {
         console.error("Error saving file:", error);
@@ -310,7 +310,7 @@ export function initializeSocket(io) {
      *  ─────────────────────────────────────────────── */
     socket.on(ACTIONS.DELETE_FILE, async ({ path }) => {
       try {
-        const fullPath = `./server/projects/${path}`;
+        const fullPath = `https://code-lab-duqw.onrender.com/projects/${path}`;
         const stats = await fs.stat(fullPath);
 
         if (stats.isDirectory()) {
@@ -351,7 +351,7 @@ export function initializeSocket(io) {
       if (process.platform === "win32") {
         ptyProcess.write("D:\r\n"); // Switch to C: drive
         ptyProcess.write(
-          `cd "D:\\Web Development\\compiler\\code\\server\\projects\\${roomId}"\r\n`
+          `cd "https://code-lab-duqw.onrender.com\\projects\\${roomId}"\r\n`
         ); // Change to the desired directory
         ptyProcess.write("cls\r\n"); // Clear screen for a clean start
       }
@@ -381,7 +381,7 @@ export function initializeSocket(io) {
     }
 
     // chaukidar
-    chaukidar.watch("./server/projects").on("all", (event, path) => {
+    chaukidar.watch("https://code-lab-duqw.onrender.com/projects").on("all", (event, path) => {
       // console.log(`File ${path} has been ${event}`);
       io.emit("file:refresh", path); // Emitting file-changed event to all connected clients
     });

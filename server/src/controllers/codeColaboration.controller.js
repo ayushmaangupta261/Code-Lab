@@ -35,7 +35,7 @@ const generateFileTree = async (req, res) => {
       }
     };
 
-    await buildTree("./server/projects", tree);
+    await buildTree("https://code-lab-duqw.onrender.com/projects", tree);
     return res.json({ tree }); // Send the generated tree as a response
   } catch (error) {
     console.error("Error generating file tree:", error.message);
@@ -54,7 +54,7 @@ const getFiles = async (req, res) => {
       return res.status(400).json({ error: "Path is required" });
     }
 
-    let content = await fs.readFile(`./server/projects/${path}`, "utf-8");
+    let content = await fs.readFile(`https://code-lab-duqw.onrender.com/projects/${path}`, "utf-8");
     console.log("content of file -> ", content);
 
     if (content.length == 0) {
@@ -96,7 +96,7 @@ const deleteFile = async (req, res) => {
     // Construct the absolute path
     const filePath = path.join(
       process.cwd(),
-      "server",
+      "https://code-lab-duqw.onrender.com",
       "projects",
       selectedFile
     );
@@ -146,7 +146,7 @@ const createFile = (req, res) => {
     // Construct the absolute path
     const filePath = path.join(
       process.cwd(),
-      "server",
+      "https://code-lab-duqw.onrender.com",
       "projects",
       selectedFile
     );
@@ -192,7 +192,7 @@ const createFolder = (req, res) => {
     // Construct the absolute path
     const folderPath = path.join(
       process.cwd(),
-      "server",
+      "https://code-lab-duqw.onrender.com",
       "projects",
       selectedFolder
     );
