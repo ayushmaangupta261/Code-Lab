@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 import { login } from "../../services/operations/authApi.js";
 import { logout } from "../../services/operations/authApi.js";
 import { logoutInstructor } from "../../services/operations/instructorApi.js";
-import { logoutInstitute } from "../../services/operations/instituteAPI.js";
+import { logoutInstitute } from "../../services/operations/instituteApi.js";
 
 const Navbar = () => {
   const dispatch = useDispatch();

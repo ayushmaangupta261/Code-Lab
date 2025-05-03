@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import google from "../../assets/Auth/google.png";
 import github from "../../assets/Auth/github.png";
 import { registerUser } from "../../services/operations/authApi.js";
-import { registerInstitute } from "../../services/operations/instituteAPI.js";
+import { registerInstitute } from "../../services/operations/instituteApi.js";
 import { registerInstructor } from "../../services/operations/instructorApi.js";
 import "./authLoader.css";
 
