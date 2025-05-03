@@ -21,7 +21,7 @@ console.log(process.env.CORS_ORIGIN);
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "https://code-lab-fty3.onrender.com/",
     // origin: process.env.CORS_ORIGIN,
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
