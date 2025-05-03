@@ -116,7 +116,7 @@ export function initializeSocket(io) {
 
       // Force PowerShell to switch to D:\
       if (process.platform === "win32") {
-        ptyProcess.write("D:\r\n"); // Switch to C: drive
+        // ptyProcess.write("D:\r\n"); // Switch to C: drive
         ptyProcess.write(
           `cd "projects\\${roomId}"\r\n`
         ); // Change to the desired directory
@@ -148,7 +148,7 @@ export function initializeSocket(io) {
     }
 
     // chaukidar
-    chaukidar.watch("https://code-lab-duqw.onrender.com/projects").on("all", (event, path) => {
+    chaukidar.watch("projects").on("all", (event, path) => {
       // console.log(`File ${path} has been ${event}`);
       io.emit("file:refresh", path); // Emitting file-changed event to all connected clients
     });
