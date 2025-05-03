@@ -1,14 +1,14 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setModal } from "../../redux/slices/authSlice";
-import { setUser } from "../../redux/slices/authSlice";
+import { setModal } from "../../redux/slices/authSlice.js";
+import { setUser } from "../../redux/slices/authSlice.js";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
-import { login } from "../../services/operations/authApi";
-import { logout } from "../../services/operations/authApi";
-import { logoutInstructor } from "../../services/operations/instructorApi";
-import { logoutInstitute } from "../../services/operations/instituteAPI";
+import { login } from "../../services/operations/authApi.js";
+import { logout } from "../../services/operations/authApi.js";
+import { logoutInstructor } from "../../services/operations/instructorApi.js";
+import { logoutInstitute } from "../../services/operations/instituteAPI.js";
 
 const Navbar = () => {
   const dispatch = useDispatch();

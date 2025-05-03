@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getMyQuestions } from "../../../../../services/operations/instructorApi";
+import { getMyQuestions } from "../../../../../services/operations/instructorApi.js";
 
 const MyQuestions = ({ onClose }) => {
   const dispatch = useDispatch();

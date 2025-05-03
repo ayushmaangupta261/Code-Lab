@@ -157,7 +157,7 @@ const Whiteboard = () => {
   }, []);
 
   useEffect(() => {
-    socketRef.current = io("http://localhost:4000"); // Connect using Socket.IO
+    socketRef.current = io("https://code-lab-duqw.onrender.com"); // Connect using Socket.IO
 
     return () => socketRef.current.disconnect();
   }, []);

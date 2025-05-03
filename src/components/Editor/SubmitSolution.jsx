@@ -7,7 +7,7 @@ import { dracula } from "@uiw/codemirror-theme-dracula";
 import {
   compileCode,
   submitAssignment,
-} from "../../services/operations/codeApi";
+} from "../../services/operations/codeApi.js";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 

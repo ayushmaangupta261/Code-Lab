@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { editInstituteDetails } from "../../../../services/operations/instituteApi.js";
+import { editInstituteDetails } from "../../../../services/operations/instituteAPI.js";
+
 
 const EditInstitute = () => {
   const dispatch = useDispatch();

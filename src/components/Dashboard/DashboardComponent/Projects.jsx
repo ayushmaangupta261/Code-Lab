@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   createAndJoinRoom,
   findRoomByEmail,
-} from "../../../services/operations/roomAPi";
+} from "../../../services/operations/roomAPi.js";
 import deleteIcon from "../../../assets/Dashboard/delete.png";
 
 const Projects = () => {

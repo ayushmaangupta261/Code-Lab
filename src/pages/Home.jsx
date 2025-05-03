@@ -9,7 +9,7 @@ import flying_planet from "../assets/Home/flying_planet.png";
 import code from "../assets/Home/code.jpg";
 import { RiLoginCircleLine } from "react-icons/ri";
 
-import { authStatus } from "../services/operations/authApi";
+import { authStatus } from "../services/operations/authApi.js";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 
