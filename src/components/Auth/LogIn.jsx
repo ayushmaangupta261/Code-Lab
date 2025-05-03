@@ -189,7 +189,7 @@ import github from "../../assets/Auth/github.png";
 import { login } from "../../services/operations/authApi";
 import { useNavigate } from "react-router";
 import { loginInstructor } from "../../services/operations/instructorApi.js";
-import { loginInstitute } from "../../services/operations/instituteAPI.";
+import { loginInstitute } from "../../services/operations/instituteApi.js";
 
 const LogIn = ({ toggleLogInForm }) => {
   const {
