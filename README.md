@@ -160,7 +160,7 @@ npm run dev
 **Ayushmaan Gupta**  
 📧 ayush.261.gupta@gmail.com  
 🔗 [GitHub](https://github.com/ayushmaangupta261)  
-🔗 [LinkedIn](https://www.linkedin.com/in/ayushmaangupta261/)
+🔗 [LinkedIn](https://www.linkedin.com/public-profile/settings?trk=d_flagship3_profile_self_view_public_profile)
 
 ---
 
