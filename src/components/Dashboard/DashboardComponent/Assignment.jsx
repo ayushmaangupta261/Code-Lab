@@ -81,7 +81,7 @@ export const Assignment = () => {
                   >
                     <p className="flex gap-x-2">
                       <span>Q {index + 1}.</span>
-                      {assignment.title}
+                      {assignment?.title}
                     </p>
 
                     {assignment.solved ? (
