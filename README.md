@@ -116,9 +116,9 @@ GOOGLE_API_KEY =
 
 #  Use in development
 
-# VITE_APP_BASE_URL = http://localhost:4000/api/v1
+VITE_APP_BASE_URL = http://localhost:4000/api/v1
 
-# VITE_APP_SOCKET_URL = http://localhost:4000
+VITE_APP_SOCKET_URL = http://localhost:4000
 
 
 # --------------------------------------------------------------
@@ -126,9 +126,9 @@ GOOGLE_API_KEY =
 #  Use in production
 
 
-VITE_APP_BASE_URL = https://code-lab-duqw.onrender.com/api/v1
+#VITE_APP_BASE_URL = https://code-lab-duqw.onrender.com/api/v1
 
-VITE_APP_SOCKET_URL = https://code-lab-duqw.onrender.com
+#VITE_APP_SOCKET_URL = https://code-lab-duqw.onrender.com
 ```
 
 
