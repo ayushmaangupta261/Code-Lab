@@ -21,21 +21,41 @@
 
 ```
 Code-Lab/
-├── server/              # Backend (Express + PTY + Socket.io)
-│   ├── index.js
-│   ├── routes/
-│   ├── controllers/
-│   └── utils/
-├── src/                 # Frontend (React)
+├── public/                     # Public assets
+├── server/                     # Backend
+│   ├── node_modules/
+│   ├── projects/               # Dynamic file/project storage
+│   └── src/
+│       ├── constants/
+│       ├── controllers/
+│       ├── middlewares/
+│       ├── models/
+│       ├── routes/
+│       ├── utils/
+│       ├── webSocket/
+│       ├── app.js
+│       └── index.js
+├── src/                        # Frontend (React)
+│   ├── assets/
 │   ├── components/
+│   ├── constants/
 │   ├── pages/
-│   └── App.jsx
-├── public/              # Static assets
+│   ├── providers/
+│   ├── redux/
+│   ├── services/
+│   ├── App.jsx
+│   ├── index.css
+│   └── main.jsx
+├── .env                        # Environment variables (excluded in .gitignore)
+├── .env.sample                 # Sample env file for reference
+├── .gitignore
 ├── index.html
-├── package.json         # Frontend dependencies
-├── vite.config.js       # Vite config
-└── README.md
+├── package.json                # Project metadata and frontend dependencies
+├── package-lock.json
+├── vite.config.js              # Vite configuration
+└── eslint.config.js
 ```
+
 
 ---
 
@@ -69,10 +89,48 @@ npm install
 
 ### 3. Create `.env` File in `/server`
 
-```env
-PORT=5000
-MONGODB_URI=mongodb+srv://<your-mongo-url>
+```env for backend
+MONGO_URL = 
+PORT = 4000
+
+CORS_ORIGIN = *
+
+CLOUDINARY_CLOUD_NAME = 
+CLOUDINARY_API_KEY = 
+CLOUDINARY_API_SECRET = 
+
+ACCESS_TOKEN_SECRET = 
+ACCESS_TOKEN_EXPIRY = 1d
+REFRESH_TOKEN_SECRET = 
+REFRESH_TOKEN_EXPIRY = 10d
+
+GOOGLE_API_KEY = 
 ```
+
+-----------------------------------
+
+### 3. Create `.env` File in `./`
+
+
+```env for frontent
+
+#  Use in development
+
+# VITE_APP_BASE_URL = http://localhost:4000/api/v1
+
+# VITE_APP_SOCKET_URL = http://localhost:4000
+
+
+# --------------------------------------------------------------
+
+#  Use in production
+
+
+VITE_APP_BASE_URL = https://code-lab-duqw.onrender.com/api/v1
+
+VITE_APP_SOCKET_URL = https://code-lab-duqw.onrender.com
+```
+
 
 ---
 
