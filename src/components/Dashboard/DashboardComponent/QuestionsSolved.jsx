@@ -94,7 +94,7 @@ const QuestionsSolved = () => {
               >
                 <p className="flex gap-x-2">
                   <span className="">Q {index + 1}.</span>
-                  {question.questionId.title}
+                  {question?.questionId?.title}
                 </p>
                 {/* <p>{assignment.description}</p> */}
                 <button
